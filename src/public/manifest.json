@@ -1,0 +1,13 @@
+{
+  "name": "TechShop Blue",
+  "short_name": "TechShop",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1426",
+  "theme_color": "#1976d2",
+  "icons": [
+    { "src": "/public/img/placeholder.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
+
+

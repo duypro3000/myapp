@@ -1,0 +1,93 @@
+<% 
+  const isEditMode = !!category.id;
+  const formAction = isEditMode 
+    ? `/admin/categories/edit/${category.id}` 
+    : '/admin/categories/new';
+%>
+
+<section class="container section admin-page" data-animate="fade">
+  <h2 class="section-title" data-animate="fade-up">
+    <%= isEditMode ? '✏️ Cập nhật danh mục' : '➕ Thêm danh mục mới' %>
+  </h2>
+
+  <form action="<%= formAction %>" method="POST" class="admin-form-grid" data-animate="fade-up" data-delay="100">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+
+    <!-- Main content -->
+    <div class="main-content">
+      <div class="admin-card glass-box">
+        <div class="form-group">
+          <label for="name">Tên danh mục</label>
+          <input type="text" id="name" name="name" value="<%= category.name || '' %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="slug">Slug (URL)</label>
+          <input type="text" id="slug" name="slug" 
+                 value="<%= category.slug || '' %>" 
+                 placeholder="Để trống để tự động tạo (khuyên dùng)">
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Mô tả</label>
+          <textarea id="description" name="description" rows="5"><%= category.description || '' %></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="image_url">Ảnh đại diện</label>
+          <input type="text" id="image_url" name="image_url" 
+                 value="<%= category.image_url || '' %>" 
+                 placeholder="https://...">
+          <% if (category.image_url) { %>
+            <img src="<%= category.image_url %>" class="form-image-preview" alt="Preview">
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar content -->
+    <div class="sidebar-content">
+      <div class="admin-card glass-box">
+        <div class="form-group">
+          <label for="is_active">Trạng thái</label>
+          <select id="is_active" name="is_active">
+            <option value="true" <%= category.is_active ? 'selected' : '' %>>🟢 Hoạt động (Hiển thị)</option>
+            <option value="false" <%= !category.is_active ? 'selected' : '' %>>🔴 Ẩn (Không hiển thị)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full">
+          <%= isEditMode ? '💾 Cập nhật' : '✅ Thêm mới' %>
+        </button>
+
+        <% if (isEditMode) { %>
+          <a href="/admin/categories" class="btn btn-outline w-full" style="margin-top:.5rem;">⬅ Trở về danh sách</a>
+        <% } %>
+      </div>
+
+      <div class="admin-card glass-box">
+        <div class="form-group">
+          <label for="parent_id">Danh mục cha</label>
+          <select id="parent_id" name="parent_id">
+            <option value="">-- (Không có) --</option>
+            <% allCats.forEach(cat => { %>
+              <% if (!isEditMode || cat.id !== category.id) { %>
+                <option value="<%= cat.id %>" <%= (category.parent_id == cat.id) ? 'selected' : '' %>>
+                  <%= cat.name %>
+                </option>
+              <% } %>
+            <% }); %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sort_order">Thứ tự sắp xếp</label>
+          <input type="number" id="sort_order" name="sort_order" 
+                 value="<%= category.sort_order || 0 %>" 
+                 placeholder="0 = mặc định">
+          <small class="muted">Số nhỏ hơn hiển thị trước.</small>
+        </div>
+      </div>
+    </div>
+  </form>
+</section>

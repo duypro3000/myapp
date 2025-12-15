@@ -1,0 +1,247 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section account-page" data-animate="fade">
+  <h2 class="section-title" data-animate="fade-up">👤 Tài khoản của tôi</h2>
+
+  <% if (locals.flash && flash.success && flash.success.length) { %>
+    <div class="alert success" data-animate="fade-up">
+      <i class="ri-check-double-line"></i> <%= flash.success[0] %>
+    </div>
+  <% } %>
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert error" data-animate="fade-up"><%= error %></div>
+  <% } %>
+
+  <form method="post" 
+        class="auth-form glass-box" 
+        data-animate="fade-up" 
+        data-duration="800">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+    <h3 class="section-subtitle" style="margin-top:0; margin-bottom: 1.5rem;">Thông tin cá nhân</h3>
+    
+    <div class="grid2">
+      <label>Họ tên
+        <input name="full_name" 
+               value="<%= currentUser.full_name || '' %>" 
+               placeholder="Nguyễn Văn A"/>
+      </label>
+      <label>Số điện thoại
+        <input name="phone" 
+               value="<%= currentUser.phone || '' %>" 
+               placeholder="090xxxxxxx"/>
+      </label>
+      <label>Ngày sinh
+        <input type="date" name="dob"
+               value="<%= currentUser.dob ? currentUser.dob.toISOString().split('T')[0] : '' %>"/>
+      </label>
+      <label>Giới tính
+        <select name="gender" class="input-control">
+          <option value="">—</option>
+          <option <%= currentUser.gender === 'Nam' ? 'selected' : '' %>>Nam</option>
+          <option <%= currentUser.gender === 'Nữ' ? 'selected' : '' %>>Nữ</option>
+        </select>
+      </label>
+    </div>
+    <button class="btn btn-primary w-full" data-animate="zoom-in">Cập nhật thông tin</button>
+  </form>
+
+  <div class="address-toolbar" data-animate="fade-up">
+    <h3 class="section-subtitle">🏠 Sổ địa chỉ</h3>
+    <a href="/account/addresses/new" class="btn btn-outline small">➕ Thêm địa chỉ mới</a>
+  </div>
+
+  <ul class="address-list" data-animate="zoom-in">
+    <% if (addrs && addrs.length) { %>
+      <% addrs.forEach(a => { %>
+        <li class="address-card">
+          <div class="address-info">
+            <strong>
+              <%= a.full_name %>
+              <% if (a.is_default) { %>
+                <span class="badge default">Mặc định</span>
+              <% } %>
+            </strong>
+            <p class="muted"><%= a.phone %></p>
+            <p class="muted">
+              <%= a.address_line1 %>, <%= a.ward %>, <%= a.district %>, <%= a.city %>
+            </p>
+          </div>
+          
+          <div class="address-actions">
+            <% if (!a.is_default) { %>
+              <form action="/account/addresses/set-default/<%= a.id %>" method="post" class="inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                <button class="btn btn-outline small" title="Đặt làm mặc định">⭐ Mặc định</button>
+              </form>
+            <% } %>
+            
+            <a href="/account/addresses/edit/<%= a.id %>" class="btn btn-outline small" title="Sửa">Sửa</a>
+            
+            <form action="/account/addresses/delete/<%= a.id %>" method="post" class="inline" 
+                  onsubmit="return confirm('Bạn có chắc muốn xóa địa chỉ này?');">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+              <button class="btn btn-danger small" title="Xóa">Xóa</button>
+            </form>
+          </div>
+        </li>
+      <% }) %>
+    <% } else { %>
+      <p class="muted" style="text-align:center; margin-top:1rem;">
+        Bạn chưa có địa chỉ nào được lưu.
+      </p>
+    <% } %>
+  </ul>
+
+  <div class="account-links" data-animate="fade-up" data-delay="120">
+    <a href="/account/orders" class="btn btn-outline">📦 Lịch sử đơn hàng</a>
+    <a href="/account/wishlist" class="btn btn-outline">❤️ Danh sách yêu thích</a>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  /* 🔹 Account Page Styling */
+  .account-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+  .glass-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+  }
+  .section-subtitle {
+    font-size: 1.3rem;
+    color: var(--primary);
+  }
+
+  /* Giữ nguyên style cho <select> */
+  .input-control {
+    width: 100%;
+    padding: .6rem .8rem;
+    margin-top: .3rem;
+    border: 1px solid var(--border);
+    border-radius: .5rem;
+    background: var(--elev);
+    color: var(--text);
+    font-size: 1rem;
+  }
+  .input-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(25,118,210,0.25);
+  }
+  .btn.w-full { width: 100%; }
+
+  /* 🚀 ĐÃ THÊM: Toolbar cho Sổ địa chỉ */
+  .address-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .address-toolbar h3 {
+    margin: 0;
+  }
+
+  /* Address list */
+  .address-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+  .address-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    padding: 1rem 1.2rem;
+    border-radius: .5rem;
+    margin-bottom: .6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Đổi sang align-top */
+  }
+  .address-card:hover {
+    background: rgba(255,255,255,0.15);
+  }
+  
+  /* 🚀 ĐÃ THÊM: Style cho phần thông tin và nút */
+  .address-info p.muted {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.9rem;
+  }
+  .address-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    margin-left: 1rem;
+  }
+  .btn.small {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+    white-space: nowrap; /* Không xuống dòng */
+  }
+  form.inline {
+    display: inline-block;
+    margin: 0;
+  }
+  .badge.default {
+    display: inline-block;
+    padding: .2rem .5rem;
+    font-size: .8rem;
+    font-weight: 600;
+    border-radius: 99px;
+    background: #dcfce7; 
+    color: #16a34a;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+
+  /* Flash messages (Giữ nguyên) */
+  .alert {
+    border-radius: .5rem;
+    padding: .75rem 1rem;
+    margin-bottom: .8rem;
+    animation: fadeIn .4s ease;
+  }
+  .alert.success { background: #dcfce7; color: #14532d; border-left: 4px solid #22c55e; }
+  .alert.error { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+
+  /* Account Links (Giữ nguyên) */
+  .account-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Dark mode (Giữ nguyên) */
+  @media (prefers-color-scheme: dark) {
+    .glass-box, .address-card {
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .input-control {
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+  }
+
+  /* Responsive (Giữ nguyên) */
+  @media (max-width: 768px) {
+    .grid2 { grid-template-columns: 1fr !important; }
+    .glass-box { padding: 1.4rem 1.6rem; }
+    .address-card { flex-direction: column; align-items: stretch; }
+    .address-actions { margin-left: 0; margin-top: 0.75rem; }
+  }
+</style>

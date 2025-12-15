@@ -1,0 +1,61 @@
+<div class="admin-topbar">
+  <div class="left">
+    <strong>📊 Dashboard</strong>
+  </div>
+  <div class="right">
+    <a class="btn btn-outline" href="/admin/orders">Đơn hàng</a>
+    <a class="btn btn-outline" href="/admin/products">Sản phẩm</a>
+    <a class="btn btn-outline" href="/admin/categories">Danh mục</a>
+  </div>
+  </div>
+
+<section class="stats-grid" data-animate="fade-up">
+  <div class="stat-card">
+    <h3>Doanh thu hôm nay</h3>
+    <div class="value"><%= typeof metrics !== 'undefined' && metrics.todayRevenue ? metrics.todayRevenue.toLocaleString() : '0' %>₫</div>
+  </div>
+  <div class="stat-card">
+    <h3>Đơn mới</h3>
+    <div class="value"><%= typeof metrics !== 'undefined' && metrics.newOrders ? metrics.newOrders : 0 %></div>
+  </div>
+  <div class="stat-card">
+    <h3>Khách hàng mới</h3>
+    <div class="value"><%= typeof metrics !== 'undefined' && metrics.newCustomers ? metrics.newCustomers : 0 %></div>
+  </div>
+  <div class="stat-card">
+    <h3>Sản phẩm đang bán</h3>
+    <div class="value"><%= typeof metrics !== 'undefined' && metrics.activeProducts ? metrics.activeProducts : 0 %></div>
+  </div>
+</section>
+
+<div class="admin-content-card" data-animate="fade-up" data-delay="120">
+  <h3 style="margin-top:0">Đơn hàng gần đây</h3>
+  <div class="table-wrap" style="margin-top:1rem">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Ngày</th>
+          <th>Trạng thái</th>
+          <th style="text-align:right">Tổng</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!orders || !orders.length) { %>
+          <tr><td colspan="4" style="text-align:center; padding:1rem; color:var(--muted)">Chưa có đơn hàng.</td></tr>
+        <% } else { %>
+          <% orders.forEach(o => { %>
+            <tr>
+              <td><strong>#<%= o.order_number %></strong></td>
+              <td><%= new Date(o.created_at).toLocaleString() %></td>
+              <td>
+                <span class="status-badge <%= o.status %>"><%= o.status %></span>
+              </td>
+              <td style="text-align:right"><%= Number(o.grand_total).toLocaleString() %>₫</td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>

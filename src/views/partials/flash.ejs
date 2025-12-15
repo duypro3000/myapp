@@ -1,0 +1,59 @@
+<section class="container section" id="flash-sale"
+  data-animate="fade"
+  data-countdown-end="<%= flashEndsAtISO || '' %>">
+  <h2 class="section-title">
+    ⚡ Flash Sale 
+    <small id="flash-timer"
+      style="font-size:.9rem;font-weight:600;color:#e63946;margin-left:.6rem">
+    </small>
+  </h2>
+
+  <% if (flash && flash.length) { %>
+  <div class="grid4" data-skeleton="true">
+    <% flash.forEach((p,i) => { %>
+      <div data-animate="fade-up" data-delay="<%= i * 80 %>">
+        <a href="/p/<%= p.slug %>" class="card flash" style="position:relative;">
+          <div class="flash-badge">🔥 GIẢM SỐC</div>
+          <img src="<%= p.cover_image_url || '/public/img/placeholder.png' %>" alt="<%= p.name %>"/>
+          <h3><%= p.name %></h3>
+          <div class="price">
+            <span class="old"><%= p.price.toLocaleString() %>₫</span>
+            <span class="now"><%= p.flash_price.toLocaleString() %>₫</span>
+          </div>
+          <div class="progress">
+           <div class="progress-bar" style="width:<%= (p.sold_percent || 0) + '%' %>"></div>
+          </div>
+        </a>
+      </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+    <p data-animate="fade-up" class="muted">Chưa có chương trình Flash Sale nào.</p>
+  <% } %>
+</section>
+
+<script>
+// Countdown realtime
+(function(){
+  const timer = document.getElementById('flash-timer');
+  const section = document.getElementById('flash-sale');
+  const end = new Date(section.dataset.countdownEnd).getTime();
+  if(!timer || !end) return;
+
+  const tick = () => {
+    const now = Date.now();
+    const diff = end - now;
+    if(diff <= 0){
+      timer.innerText = 'Đã kết thúc';
+      timer.style.color = '#999';
+      return;
+    }
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    timer.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    requestAnimationFrame(tick);
+  };
+  tick();
+})();
+</script>

@@ -1,0 +1,85 @@
+<%- include('./layout') %>
+
+<div class="admin-content">
+  <h1 data-animate="fade">📊 Báo cáo & Thống kê</h1>
+
+  <div class="stats-grid" data-animate="fade-up">
+    <div class="stat-card">
+      <h3>Doanh thu tháng</h3>
+      <div class="value"><%= (report && report.monthlyRevenue ? report.monthlyRevenue : 0).toLocaleString() %>₫</div>
+    </div>
+    <div class="stat-card">
+      <h3>Đơn hàng mới</h3>
+      <div class="value"><%= (report && report.newOrders) || 0 %></div>
+    </div>
+    <div class="stat-card">
+      <h3>Khách hàng mới</h3>
+      <div class="value"><%= (report && report.newCustomers) || 0 %></div>
+    </div>
+    <div class="stat-card">
+      <h3>Sản phẩm sắp hết</h3>
+      <div class="value"><%= (report && report.lowStock) || 0 %></div>
+    </div>
+  </div>
+
+  <div data-animate="zoom-in" style="margin-top:2rem;">
+    <canvas id="revenueChart" height="120"></canvas>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function () {
+  // ✅ Lấy dữ liệu an toàn từ server (nếu thiếu thì dùng mảng rỗng)
+const labels = JSON.parse('<%- JSON.stringify((report && report.labels) || []) %>');
+const values = JSON.parse('<%- JSON.stringify((report && report.values) || []) %>');
+
+  const el = document.getElementById('revenueChart');
+  if (!el) return;
+
+  const ctx = el.getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Doanh thu (₫)',
+        data: values,
+        borderColor: '#1976d2',
+        backgroundColor: 'rgba(25,118,210,0.15)',
+        tension: 0.3,
+        fill: true,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx){
+              const v = Number(ctx.parsed.y || 0);
+              return ' ' + v.toLocaleString() + '₫';
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(v){ return Number(v).toLocaleString() + '₫'; }
+          },
+          grid: { color: 'rgba(0,0,0,0.06)' }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+})();
+</script>

@@ -1,0 +1,84 @@
+<div class="admin-topbar">
+  <div class="left">
+    <strong>📂 Quản lý danh mục</strong>
+  </div>
+  <div class="right">
+    <a href="/admin/categories/new" class="btn btn-primary">➕ Thêm danh mục</a>
+  </div>
+  </div>
+
+<div class="toolbar" data-animate="fade-up" data-delay="100" style="margin-top:1rem">
+  <form method="get" class="admin-form-inline">
+    <input type="text" name="q" placeholder="Tìm tên, slug..." 
+           value="<%= q || '' %>" class="input-q"/>
+    <button class="btn btn-outline">Tìm kiếm</button>
+  </form>
+</div>
+
+<div class="glass-box table-wrap" data-animate="fade-up" data-delay="150">
+  <% if (!cats.length) { %>
+    <div class="empty-state">
+      <img src="/public/img/placeholder.png" alt="Empty"/>
+      <p>Chưa có danh mục nào. Hãy bắt đầu bằng việc tạo danh mục mới.</p>
+      <a href="/admin/categories/new" class="btn btn-primary">➕ Thêm danh mục</a>
+    </div>
+  <% } else { %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Tên danh mục</th>
+          <th>Slug</th>
+          <th>Trạng thái</th>
+          <th>Sản phẩm</th>
+          <th style="width:220px">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% cats.forEach((c, i) => { %>
+          <tr data-animate="fade-up" data-delay="<%= i * 50 %>">
+            <td><strong><%= c.name %></strong></td>
+            <td><%= c.slug %></td>
+            <td>
+              <% if (c.is_active) { %>
+                <span class="status-badge active">Hoạt động</span>
+              <% } else { %>
+                <span class="status-badge inactive">Đã ẩn</span>
+              <% } %>
+            </td>
+            <td><%= c.product_count || 0 %></td>
+            <td>
+              <span class="row-actions">
+                <a href="/admin/categories/edit/<%= c.id %>" class="btn btn-outline small">✏️ Sửa</a>
+                <% if (c.is_active) { %>
+                  <form action="/admin/categories/hide/<%= c.id %>" method="post" class="inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                    <button class="btn btn-outline small">Ẩn</button>
+                  </form>
+                <% } else { %>
+                  <form action="/admin/categories/unhide/<%= c.id %>" method="post" class="inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                    <button class="btn btn-outline small">Hiện</button>
+                  </form>
+                <% } %>
+
+                <form action="/admin/categories/delete/<%= c.id %>" method="post" class="inline"
+                      onsubmit="return confirm('Xóa vĩnh viễn danh mục? Hành động không thể hoàn tác.');">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                  <button class="btn btn-danger small">🗑 Xóa</button>
+                </form>
+              </span>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<% if (pages && pages > 1) { %>
+  <div class="pagination" data-animate="fade-up" data-delay="250">
+    <% for (let i = 1; i <= pages; i++) { %>
+      <a href="?q=<%= q %>&page=<%= i %>" class="page-link <%= i === page ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+  </div>
+<% } %>

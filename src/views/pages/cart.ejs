@@ -1,0 +1,203 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section cart-page" data-animate="fade">
+  <h2 class="section-title" data-animate="fade-up">🛍️ Giỏ hàng</h2>
+
+  <% if (!items.length) { %>
+    <div class="empty-cart glass-box" data-animate="zoom-in">
+      <img src="/public/img/empty-cart.svg" alt="Giỏ hàng trống" class="empty-cart-img"/>
+      <p>Giỏ hàng của bạn đang trống. <a href="/">Mua sắm ngay</a></p>
+    </div>
+  <% } else { %>
+    <div class="cart-table-wrapper" data-animate="fade-up" data-duration="700">
+      <table class="cart-table glass-box">
+        <thead>
+          <tr>
+            <th>Sản phẩm</th>
+            <th>Giá</th>
+            <th>SL</th>
+            <th>Tạm tính</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(it => { %>
+            <tr data-animate="fade-up">
+              <td>
+                <a href="/p/<%= it.product_slug %>" class="product-link">
+                  <%= it.product_name %>
+                </a>
+              </td>
+              <td><%= Number(it.price_at).toLocaleString() %>₫</td>
+              <td>
+                <form action="/cart/update" method="post" class="inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                  <input type="hidden" name="item_id" value="<%= it.id %>"/>
+                  <input type="number" name="quantity" min="1" value="<%= it.quantity %>" class="qty-input"/>
+                  <button class="btn btn-outline small">Cập nhật</button>
+                </form>
+              </td>
+              <td><%= (Number(it.price_at) * it.quantity).toLocaleString() %>₫</td>
+              <td>
+                <form action="/cart/remove" method="post" class="inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                  <input type="hidden" name="item_id" value="<%= it.id %>"/>
+                  <button class="btn btn-outline danger small">Xóa</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cart-summary glass-box" data-animate="zoom-in">
+      <div class="summary-line">
+        <span>Tạm tính:</span>
+        <strong><%= subtotal.toLocaleString() %>₫</strong>
+      </div>
+      <a class="btn btn-primary checkout-btn" href="/checkout" data-animate="fade-up">
+        Tiến hành thanh toán
+      </a>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  .cart-page {
+    max-width: 1000px;
+    margin: 2rem auto;
+  }
+
+  .glass-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+  }
+
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cart-table th, .cart-table td {
+    padding: .9rem .8rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .cart-table th {
+    color: var(--primary);
+    background: rgba(25,118,210,0.05);
+    font-weight: 600;
+  }
+
+  .product-link {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .product-link:hover { color: var(--primary); }
+
+  /* === SỬA LỖI Ở ĐÂY (LIGHT MODE) === */
+  .qty-input {
+    width: 70px;
+    padding: .3rem .4rem;
+    text-align: center;
+    border-radius: .4rem;
+    border: 1px solid var(--border);
+    /* Thêm 2 dòng này: */
+    background-color: rgba(255,255,255,0.85); 
+    color: var(--text);
+  }
+
+  /* === SỬA LỖI Ở ĐÂY (FOCUS) === */
+  .qty-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    /* Thêm dòng này: */
+    box-shadow: 0 0 0 2px rgba(25,118,210,0.25);
+  }
+
+  .btn.small {
+    padding: .4rem .6rem;
+    font-size: .85rem;
+  }
+
+  .cart-summary {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .summary-line strong {
+    color: var(--primary-700);
+  }
+
+  .checkout-btn {
+    padding: .8rem 2rem;
+    font-size: 1rem;
+    border-radius: .6rem;
+  }
+
+  /* Empty cart */
+  .empty-cart {
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+
+  .empty-cart-img {
+    width: 180px;
+    opacity: .9;
+    margin-bottom: 1rem;
+  }
+
+  .empty-cart a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .empty-cart a:hover { text-decoration: underline; }
+
+  @media (prefers-color-scheme: dark) {
+    .glass-box {
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    /* === THÊM CÁC QUY TẮC NÀY (DARK MODE) === */
+    .qty-input {
+      background: rgba(255,255,255,0.08);
+      color: #e5e7eb;
+    }
+    .qty-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(25,118,210,0.25);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .cart-summary {
+      flex-direction: column;
+      text-align: center;
+    }
+    .checkout-btn {
+      width: 100%;
+    }
+    .cart-table th, .cart-table td {
+      padding: .7rem .5rem;
+      font-size: .9rem;
+    }
+  }
+</style>

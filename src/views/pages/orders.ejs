@@ -1,0 +1,132 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section orders-page" data-animate="fade">
+  <h2 class="section-title" data-animate="fade-up">📦 Đơn hàng của tôi</h2>
+
+  <% if (!orders.length) { %>
+    <p class="muted" data-animate="fade-up">Chưa có đơn hàng nào.</p>
+  <% } else { %>
+    <div class="orders-wrapper glass-box" data-animate="zoom-in" data-duration="700">
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Mã đơn</th>
+            <th>Ngày đặt</th>
+            <th>Trạng thái</th>
+            <th>Tổng cộng</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orders.forEach((o, i) => { %>
+            <tr data-animate="fade-up" data-delay="<%= i * 60 %>">
+              <td><a href="/orders/<%= o.order_number %>" class="link"><strong>#<%= o.order_number %></strong></a></td>
+              <td><%= new Date(o.created_at).toLocaleString('vi-VN') %></td>
+              <td>
+                <% if (o.status === 'delivered') { %>
+                  <span class="status delivered">Đã giao</span>
+                <% } else if (o.status === 'processing') { %>
+                  <span class="status processing">Đang xử lý</span>
+                <% } else if (o.status === 'cancelled') { %>
+                  <span class="status cancelled">Đã hủy</span>
+                <% } else { %>
+                  <span class="status pending">Chờ xác nhận</span>
+                <% } %>
+              </td>
+              <td><strong><%= Number(o.grand_total).toLocaleString('vi-VN') %>₫</strong></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  .orders-page {
+    margin-top: 2rem;
+  }
+
+  .orders-wrapper {
+    background: var(--elev);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: var(--radius-md);
+  }
+
+  .cart-table th, .cart-table td {
+    padding: .75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .cart-table th {
+    font-weight: 700;
+    color: var(--text);
+    background: var(--primary-100);
+  }
+
+  .link {
+    color: var(--primary-700);
+    text-decoration: none;
+  }
+
+  .link:hover {
+    text-decoration: underline;
+  }
+
+  /* Trạng thái đơn hàng */
+  .status {
+    display: inline-block;
+    padding: .35rem .6rem;
+    border-radius: .5rem;
+    font-weight: 600;
+    font-size: .9rem;
+  }
+
+  .status.delivered {
+    background: rgba(34,197,94,.15);
+    color: #16a34a;
+  }
+
+  .status.processing {
+    background: rgba(59,130,246,.15);
+    color: #1d4ed8;
+  }
+
+  .status.pending {
+    background: rgba(250,204,21,.15);
+    color: #b45309;
+  }
+
+  .status.cancelled {
+    background: rgba(239,68,68,.15);
+    color: #dc2626;
+  }
+
+  /* Dark mode tweak */
+  .theme-dark .cart-table th {
+    background: #122544;
+    color: #cdd9ff;
+  }
+
+  .theme-dark .orders-wrapper {
+    box-shadow: var(--shadow-md);
+  }
+
+  @media (max-width: 700px) {
+    .cart-table th, .cart-table td {
+      font-size: .9rem;
+      padding: .6rem;
+    }
+  }
+</style>

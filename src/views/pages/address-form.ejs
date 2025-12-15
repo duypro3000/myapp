@@ -1,0 +1,104 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<% 
+  // 1. Kiểm tra xem đây là form Sửa hay Thêm mới
+  const isEditMode = !!address.id;
+
+  // 2. Quyết định 'action' của form
+  const formAction = isEditMode 
+    ? `/account/addresses/edit/${address.id}` 
+    : '/account/addresses/new';
+%>
+
+<section class="container auth section" data-animate="fade">
+  
+  <h2 class="section-title" data-animate="fade-up">
+    <%= isEditMode ? 'Sửa địa chỉ' : 'Thêm địa chỉ mới' %>
+  </h2>
+
+  <form method="post" action="<%= formAction %>" 
+        class="auth-form glass-box" 
+        data-animate="fade-up" 
+        data-duration="700">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+
+    <label>Họ tên người nhận</label>
+    <input type="text" name="full_name" value="<%= address.full_name || '' %>" placeholder="Nguyễn Văn A" required/>
+
+    <label>Số điện thoại</label>
+    <input type="text" name="phone" value="<%= address.phone || '' %>" placeholder="090xxxxxxx" required/>
+
+    <label>Địa chỉ (Số nhà, tên đường)</label>
+    <input type="text" name="address_line1" value="<%= address.address_line1 || '' %>" placeholder="123 Đường ABC" required/>
+    
+    <div class="grid3" style="margin-top: 0.8rem;">
+      <label>Tỉnh/Thành phố
+        <input name="province" value="<%= address.province || '' %>" placeholder="TP. Hồ Chí Minh"/>
+      </label>
+      <label>Quận/Huyện
+        <input name="district" value="<%= address.district || '' %>" placeholder="Quận 1"/>
+      </label>
+      <label>Phường/Xã
+        <input name="city" value="<%= address.city || '' %>" placeholder="Phường Bến Nghé"/>
+      </label>
+    </div>
+
+    <label>Nhãn địa chỉ (ví dụ: Nhà, Công ty)</label>
+    <input type="text" name="label" value="<%= address.label || '' %>" placeholder="Nhà riêng"/>
+    
+    <label class="inline" style="margin-top: 1rem;">
+      <input type="checkbox" name="is_default" value="true" <%= address.is_default ? 'checked' : '' %>/>
+      Đặt làm địa chỉ mặc định
+    </label>
+
+    <button class="btn btn-primary w-full" data-animate="zoom-in" style="margin-top: 1.5rem;">
+      <%= isEditMode ? 'Cập nhật địa chỉ' : 'Lưu địa chỉ' %>
+    </button>
+
+    <p class="muted text-center" style="margin-top:1rem">
+      <a href="/account" class="link">Quay lại Sổ địa chỉ</a>
+    </p>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  .auth.section {
+    max-width: 550px; /* Rộng hơn login để chứa grid3 */
+    margin: 2rem auto;
+    padding: 2rem 2.5rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+  }
+  .auth h2.section-title {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 1.4rem;
+  }
+  .btn.w-full { width: 100%; }
+  
+  /* Căn chỉnh lại label trong grid3 (nếu cần) */
+  .grid3 label { margin-bottom: 0; }
+  
+  .inline { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    font-weight: 500;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .auth.section {
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+  }
+  @media (max-width: 500px) {
+     .grid3 { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,922 @@
+:root {
+  --primary: #1976d2;
+  --primary-600: #1a66bf;
+  --primary-700: #1565c0;
+  --primary-100: #eaf3ff;
+
+  --blue-100: #e8f1ff;
+  --blue-700: #0b3c6f;
+
+  --bg: #ffffff;
+  --elev: #ffffff;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+
+  --danger: #e63946;
+  --success: #22c55e;
+  --warning: #ff9800;
+
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.06);
+  --shadow-md: 0 8px 24px rgba(25,118,210,.18);
+  --shadow-lg: 0 18px 40px rgba(25,118,210,.22);
+}
+
+/* --- 2. DARK MODE (Chế độ tối) --- */
+.theme-dark {
+  --bg: #0b1426;
+  --elev: #0f1b33;
+  --text: #e6efff;
+  --muted: #9caecf;
+  --border: #1a2744;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.35);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.45);
+  --shadow-lg: 0 18px 40px rgba(0,0,0,.55);
+}
+
+/* --- 3. RESET & BASE (Layout admin) --- */
+* { box-sizing: border-box; }
+body.admin-body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  background: var(--blue-100); /* Màu nền riêng cho admin */
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.theme-dark body.admin-body {
+  background: var(--bg); /* #0b1426 */
+}
+a {
+  color: var(--primary-700);
+  text-decoration: none;
+}
+.theme-dark a { color: var(--primary); }
+a:hover { text-decoration: underline; }
+
+/* --- 4. LAYOUT CHÍNH (Sidebar + Main) --- */
+.admin-layout-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* --- 5. SIDEBAR (Menu dọc) --- */
+.admin-sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background: var(--blue-700);
+  color: #fff;
+  padding: 1.5rem 1rem;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+.admin-sidebar .logo {
+  font-weight: 800;
+  color: #fff;
+  font-size: 1.5rem;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+}
+.admin-sidebar .logo span { color: #bfe0ff; }
+.admin-sidebar .nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.nav-group-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #9cc7f7;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+  padding: 0 0.75rem;
+}
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  color: #cfe6ff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.admin-nav-link i {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+.admin-nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  text-decoration: none;
+  transform: none;
+  opacity: 1;
+}
+.admin-nav-link.active {
+  background: #fff;
+  color: var(--primary-700);
+}
+.admin-nav-link.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.admin-nav-link.separator {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 1rem;
+  color: #fff;
+}
+
+/* --- 6. VÙNG NỘI DUNG CHÍNH --- */
+.admin-main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+.admin-page-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary-700);
+  padding-bottom: 0.5rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+.theme-dark .admin-page-title {
+  color: var(--primary);
+}
+.admin-content-card {
+  background: var(--elev);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- 7. DASHBOARD CARDS (Thẻ thống kê) --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+.stat-card {
+  background: var(--elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.stat-card h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+}
+.stat-card .value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary-700);
+}
+.theme-dark .stat-card .value {
+  color: var(--primary);
+}
+
+/* --- 8. BẢNG (Tables) --- */
+.table-wrap {
+  overflow-x: auto;
+  background: var(--elev);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+tbody tr:last-child td {
+  border-bottom: none;
+}
+th {
+  font-weight: 700;
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+.theme-dark th {
+  background: #122544;
+  color: #dbe8ff;
+}
+tbody tr:hover {
+  background: rgba(25,118,210,0.04);
+}
+.theme-dark tbody tr:hover {
+  background: rgba(255,255,255,0.03);
+}
+.admin-table-thumb {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+/* --- 9. NÚT (Buttons) --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap; /* tránh xuống dòng chữ nút */
+  color: inherit; /* đảm bảo kế thừa màu từ biến thể */
+}
+.btn i { color: inherit; }
+.btn:hover { text-decoration: none; }
+.btn.small {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+}
+.btn-primary {
+  background: var(--primary-700);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(25,118,210,0.2);
+}
+.btn-primary:hover {
+  background: var(--primary);
+  box-shadow: 0 6px 16px rgba(25,118,210,0.25);
+}
+.theme-dark .btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-outline {
+  border-color: var(--border);
+  color: var(--primary-700);
+  background: var(--elev);
+}
+.btn-outline:hover {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  border-color: var(--primary-100);
+}
+.theme-dark .btn-outline {
+  border-color: #2a3b5c;
+  color: #e6efff;
+  background: rgba(255,255,255,0.06);
+}
+.theme-dark .btn-outline:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: #3a547f;
+}
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+form.inline {
+  display: inline-block;
+  margin-left: 0.25rem;
+}
+
+/* --- 10. FORM --- */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.admin-form-inline { display: flex; gap: 0.5rem; }
+.admin-form-inline .input-q { min-width: 250px; }
+
+.admin-form-inline input[type="text"],
+.admin-form-inline select,
+.admin-form input, 
+.admin-form select, 
+.admin-form textarea {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  outline: none;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.admin-form input:hover,
+.admin-form select:hover,
+.admin-form textarea:hover {
+  border-color: rgba(25, 118, 210, 0.4);
+  background: var(--elev);
+}
+
+.admin-form input::placeholder,
+.admin-form textarea::placeholder { 
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.admin-form input:focus, 
+.admin-form select:focus, 
+.admin-form textarea:focus,
+.admin-form-inline input:focus,
+.admin-form-inline select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-100);
+  outline: none;
+  background: var(--elev);
+}
+
+.admin-form select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px 12px;
+  padding-right: 2.5rem;
+}
+
+.admin-form select:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231976d2' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+
+/* Dark mode - Style đẹp hơn cho dark theme, đồng bộ với product form */
+.theme-dark .admin-form input, 
+.theme-dark .admin-form select, 
+.theme-dark .admin-form textarea,
+.theme-dark .admin-form-inline input,
+.theme-dark .admin-form-inline select {
+  background: #1a2744;
+  border-color: #4a5568;
+  color: #e6efff;
+}
+
+.theme-dark .admin-form input:hover,
+.theme-dark .admin-form select:hover,
+.theme-dark .admin-form textarea:hover {
+  background: #1e2d4a;
+  border-color: #5a6b7f;
+}
+
+.theme-dark .admin-form input::placeholder,
+.theme-dark .admin-form textarea::placeholder { 
+  color: #9caecf;
+  opacity: 0.8;
+}
+
+.theme-dark .admin-form select option { 
+  background: #0f1b33; 
+  color: #e6efff;
+  padding: 0.5rem;
+}
+
+.theme-dark .admin-form input:focus, 
+.theme-dark .admin-form select:focus, 
+.theme-dark .admin-form textarea:focus,
+.theme-dark .admin-form-inline input:focus,
+.theme-dark .admin-form-inline select:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+  background: #1e2d4a;
+}
+
+.theme-dark .admin-form select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239caecf' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-size: 12px 12px;
+}
+
+.theme-dark .admin-form select:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2360a5fa' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-size: 12px 12px;
+}
+
+/* Layout 2 cột cho Form */
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+}
+.main-content { grid-column: 1 / 2; }
+.sidebar-content {
+  grid-column: 2 / 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.admin-card {
+  background: var(--elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+}
+.theme-dark .admin-card { background: #0f1b33; }
+.admin-card h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+.form-group { margin-bottom: 1.25rem; }
+.form-group:last-child { margin-bottom: 0; }
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+/* Style cho input/textarea/select trong form-group (dùng cho category form) */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="email"],
+.form-group input[type="url"],
+.form-group textarea,
+.form-group select {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border) !important;
+  background-color: var(--bg) !important;
+  background-image: none !important;
+  color: var(--text) !important;
+  font-size: 0.95rem !important;
+  font-weight: 400 !important;
+  transition: all 0.2s ease !important;
+  outline: none !important;
+  font-family: inherit !important;
+  box-sizing: border-box !important;
+  -webkit-box-sizing: border-box !important;
+  -moz-box-sizing: border-box !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: rgba(25, 118, 210, 0.4) !important;
+  background-color: var(--elev) !important;
+  background-image: none !important;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder { 
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.form-group input:focus, 
+.form-group select:focus, 
+.form-group textarea:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-100) !important;
+  outline: none !important;
+  background-color: var(--elev) !important;
+  background-image: none !important;
+}
+
+.form-group select {
+  cursor: pointer !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-color: var(--bg) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 12px 12px !important;
+  padding-right: 2.5rem !important;
+}
+
+.form-group select:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231976d2' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+}
+
+/* Dark mode cho form-group */
+.theme-dark .form-group input[type="text"],
+.theme-dark .form-group input[type="number"],
+.theme-dark .form-group input[type="email"],
+.theme-dark .form-group input[type="url"],
+.theme-dark .form-group textarea,
+.theme-dark .form-group select {
+  background-color: #1a2744 !important;
+  background-image: none !important;
+  border-color: #4a5568 !important;
+  color: #e6efff !important;
+}
+
+.theme-dark .form-group input:hover,
+.theme-dark .form-group select:hover,
+.theme-dark .form-group textarea:hover {
+  background-color: #1e2d4a !important;
+  background-image: none !important;
+  border-color: #5a6b7f !important;
+}
+
+.theme-dark .form-group input::placeholder,
+.theme-dark .form-group textarea::placeholder { 
+  color: #9caecf !important;
+  opacity: 0.8 !important;
+}
+
+.theme-dark .form-group select option { 
+  background-color: #0f1b33 !important;
+  background-image: none !important;
+  color: #e6efff !important;
+  padding: 0.5rem !important;
+}
+
+.theme-dark .form-group input:focus, 
+.theme-dark .form-group select:focus, 
+.theme-dark .form-group textarea:focus {
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15) !important;
+  background-color: #1e2d4a !important;
+  background-image: none !important;
+}
+
+.theme-dark .form-group select {
+  background-color: #1a2744 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239caecf' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+  background-size: 12px 12px !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+}
+
+.theme-dark .form-group select:hover {
+  background-color: #1e2d4a !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239caecf' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+}
+
+.theme-dark .form-group select:focus {
+  background-color: #1e2d4a !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2360a5fa' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+  background-size: 12px 12px !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+}
+.form-image-preview {
+  width: 100%;
+  margin-top: 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+/* --- 11. ALERTS & BADGES (Thông báo) --- */
+.alert { 
+  padding:.75rem 1rem; 
+  border-radius:.5rem; 
+  margin-bottom:1.5rem; 
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+.alert.success { 
+  background:#dcfce7; 
+  color:#14532d; 
+  border: 1px solid #16a34a;
+}
+.alert.error { 
+  background:#fee2e2; 
+  color:#991b1b; 
+  border: 1px solid #ef4444;
+}
+.alert.muted {
+  background: var(--blue-100);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+/* Badges (cho trạng thái) */
+.status-badge {
+  display: inline-block;
+  padding: .25rem .6rem;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: .8rem;
+  text-align: center;
+  min-width: 80px;
+}
+.status-badge.active, .status-badge.delivered { background: #dcfce7; color: #16a34a; }
+.status-badge.draft { background: #e0e7ff; color: #4338ca; }
+.status-badge.inactive, .status-badge.archived, .status-badge.cancelled { background: #fee2e2; color: #dc2626; }
+.status-badge.new { background: #e0e7ff; color: #4338ca; }
+.status-badge.processing { background: #fef9c3; color: #b45309; }
+.status-badge.shipped { background: #cffafe; color: #0891b2; }
+
+/* --- 12. PHÂN TRANG (Pagination) --- */
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: .5rem;
+}
+.page-link {
+  padding: .6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: .4rem;
+  text-decoration: none;
+  color: var(--text);
+  background: rgba(255,255,255,0.08);
+  transition: all .3s;
+}
+.page-link:hover { background: var(--primary); color: #fff; text-decoration: none; }
+.page-link.active {
+  background: var(--primary-700);
+  color: #fff;
+  border-color: var(--primary-700);
+}
+
+/* --- 13. MODALS (Giữ nguyên) --- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-content {
+  background: var(--elev);
+  border-radius: var(--radius-md);
+  padding: 1.6rem;
+  min-width: 320px;
+  max-width: 480px;
+  box-shadow: var(--shadow-lg);
+  animation: popIn 0.3s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* --- 14. AOS (Hiệu ứng) --- */
+[data-animate] { opacity: 0; transform: translateY(12px); }
+.aos-in { opacity: 1 !important; transform: none !important; transition: all 0.6s ease; }
+
+/* --- 15. RESPONSIVE --- */
+@media (max-width: 900px) {
+  .admin-layout-wrapper {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+  }
+  .admin-sidebar .nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  .admin-nav-link {
+    white-space: nowrap;
+  }
+  .nav-group-title, .admin-nav-link.separator {
+    display: none;
+  }
+  .admin-main-content {
+    padding: 1.5rem;
+  }
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .main-content { grid-row: 2 / 3; }
+  .sidebar-content { grid-row: 1 / 2; }
+}
+/* --- 16. HEADER BAR (Thanh trên cùng trong admin) --- */
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--elev);
+  border-bottom: 1px solid var(--border);
+  padding: 0.8rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.theme-dark .admin-topbar {
+  background: #0f1b33;
+  border-color: #1a2744;
+}
+.admin-topbar .right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.admin-topbar button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 1.2rem;
+  transition: opacity .25s;
+}
+.admin-topbar button:hover {
+  opacity: .8;
+}
+
+/* --- 17. TOAST (Thông báo popup nhỏ) --- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--elev);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  padding: 0.9rem 1.2rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 600;
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all .4s ease;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast.success {
+  border-left: 4px solid var(--success);
+  color: var(--success);
+}
+.toast.error {
+  border-left: 4px solid var(--danger);
+  color: var(--danger);
+}
+
+/* --- 18. TABLE HOVER ACTIONS (Nút nổi khi hover dòng bảng) --- */
+.admin-table tr:hover td .row-actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+.row-actions {
+  display: inline-flex;
+  gap: 0.25rem;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .25s, transform .25s;
+}
+
+/* --- 19. CARD HOVER & SHADOW ENHANCEMENT --- */
+.glass-box {
+  background: var(--elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  transition: box-shadow .25s ease, transform .25s ease;
+}
+.glass-box:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.theme-dark .glass-box {
+  background: rgba(255,255,255,0.04);
+  border-color: #2a3b5c;
+}
+
+/* --- 20. EMPTY STATE (Trang trống hoặc chưa có dữ liệu) --- */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted);
+}
+.empty-state img {
+  width: 180px;
+  margin-bottom: 1rem;
+  opacity: 0.85;
+}
+.empty-state .btn {
+  margin-top: 1rem;
+}
+
+/* --- 21. TRANSITIONS / ANIMATIONS TỔNG HỢP --- */
+.fade-in {
+  animation: fadeIn .6s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide-up {
+  animation: slideUp .4s ease forwards;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 22. SCROLLBAR TÙY CHỈNH --- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(25,118,210,0.4);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(25,118,210,0.6);
+}
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05);
+}
+.theme-dark ::-webkit-scrollbar-thumb {
+  background: rgba(96,165,250,0.4);
+}
+.theme-dark ::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.08);
+}
+
+/* --- 23. RESPONSIVE CẢI TIẾN CHO TABLE & SIDEBAR --- */
+@media (max-width: 768px) {
+  .table-wrap table, 
+  .table-wrap thead, 
+  .table-wrap tbody, 
+  .table-wrap th, 
+  .table-wrap td, 
+  .table-wrap tr {
+    display: block;
+  }
+  .table-wrap thead tr {
+    display: none;
+  }
+  .table-wrap td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-wrap td::before {
+    position: absolute;
+    top: 0.9rem;
+    left: 0.9rem;
+    width: 45%;
+    white-space: nowrap;
+    font-weight: 700;
+    color: var(--muted);
+    content: attr(data-label);
+  }
+  .admin-sidebar {
+    padding: 1rem;
+  }
+  .admin-sidebar .logo {
+    margin-bottom: 0.8rem;
+  }
+  .admin-main-content {
+    padding: 1rem;
+  }
+}

@@ -1,0 +1,143 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section thankyou-page text-center" data-animate="fade">
+  <div class="success-icon" data-animate="zoom-in" style="font-size:5rem; color:#22c55e; margin-bottom:.8rem;">
+    ✅
+  </div>
+
+  <h2 class="section-title" data-animate="fade-up">🎉 Cảm ơn bạn đã đặt hàng!</h2>
+  <p class="thankyou-text" data-animate="fade-up" data-delay="100">
+    Đơn hàng của bạn đã được tiếp nhận thành công.<br/>
+    Mã đơn hàng: <strong>#<%= orderNumber %></strong>
+  </p>
+
+  <div class="thankyou-actions" data-animate="fade-up" data-delay="200">
+    <a href="/orders" class="btn btn-primary">📦 Xem đơn hàng</a>
+    <a href="/" class="btn btn-outline">⬅️ Tiếp tục mua sắm</a>
+  </div>
+
+  <div class="thankyou-image" data-animate="fade" data-delay="300">
+    <img src="/public/img/thankyou-illustration.svg" alt="Cảm ơn" class="thankyou-illustration"/>
+  </div>
+</section>
+
+<script>
+  // 🎊 Hiệu ứng Confetti sau khi đặt hàng thành công
+  document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.createElement("canvas");
+    canvas.id = "confetti-canvas";
+    canvas.style.position = "fixed";
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.pointerEvents = "none";
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext("2d");
+    const confetti = [];
+    const colors = ["#22c55e", "#3b82f6", "#facc15", "#ef4444", "#8b5cf6"];
+
+    const createConfetti = () => {
+      for (let i = 0; i < 120; i++) {
+        confetti.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight - window.innerHeight,
+          r: Math.random() * 6 + 3,
+          d: Math.random() * 1 + 1,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.fillStyle = c.color;
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      update();
+    };
+
+    const update = () => {
+      confetti.forEach(c => {
+        c.y += c.d;
+        if (c.y > window.innerHeight) {
+          c.y = -10;
+          c.x = Math.random() * window.innerWidth;
+        }
+      });
+    };
+
+    createConfetti();
+    setInterval(draw, 15);
+    setTimeout(() => document.body.removeChild(canvas), 6000);
+  });
+</script>
+
+<style>
+  .thankyou-page {
+    max-width: 700px;
+    margin: 3rem auto;
+    text-align: center;
+  }
+
+  .thankyou-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .thankyou-actions {
+    margin-top: 1.2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .btn-outline {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+  }
+
+  .thankyou-illustration {
+    max-width: 300px;
+    width: 100%;
+    opacity: 0.9;
+    margin-top: 2rem;
+  }
+
+  .thankyou-page .glass-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .thankyou-page {
+      color: #e5e7eb;
+    }
+    .btn-outline {
+      border-color: #4b5563;
+      color: #e5e7eb;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .thankyou-actions {
+      flex-direction: column;
+    }
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,175 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container auth-split" data-animate="fade">
+  <div class="split-card" data-animate="fade-up">
+    <div class="split-left">
+      <div class="hero">
+        <div class="hero-illus">🚀</div>
+        <h3>Plan your activities and control your progress online</h3>
+        <p>Gia nhập TechShop Blue để mua sắm nhanh chóng, tiện lợi.</p>
+        <div class="dots"><span></span><span></span><span></span><span></span></div>
+      </div>
+    </div>
+    <div class="split-right">
+      <div class="header-row">
+        <a class="muted" href="/login">Sign In</a>
+      </div>
+      <h2 class="split-title">Sign Up</h2>
+
+  <% if (locals.flash && flash.success && flash.success.length) { %>
+    <div class="alert success" data-animate="fade-up">
+      <%= flash.success[0] %>
+    </div>
+  <% } %>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert error" data-animate="fade-up"><%= error %></div>
+  <% } %>
+
+      <form method="post" action="/register" 
+        class="auth-form" 
+        data-animate="fade-up" 
+        data-duration="700">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="you@example.com"/>
+
+        <label>Username</label>
+        <input name="username" required placeholder="yourname"/>
+
+        <label>Mật khẩu</label>
+        <div class="password-wrapper">
+          <input type="password" name="password" id="password" required minlength="6" placeholder="Tối thiểu 6 ký tự"/>
+          <button type="button" class="toggle-password" data-target="password" aria-label="Hiện mật khẩu">👁</button>
+        </div>
+
+        <label>Xác nhận mật khẩu</label>
+        <div class="password-wrapper">
+          <input type="password" name="confirm" id="confirm" minlength="6" placeholder="Nhập lại mật khẩu"/>
+          <button type="button" class="toggle-password" data-target="confirm" aria-label="Hiện mật khẩu">👁</button>
+        </div>
+
+        <button class="btn btn-primary w-full" data-animate="zoom-in">Tạo tài khoản</button>
+
+    <p class="muted text-center" style="margin-top:1rem">
+      Đã có tài khoản? <a href="/login" class="link">Đăng nhập</a>
+    </p>
+        <div style="margin-top:1.2rem" data-animate="fade-up" data-delay="120">
+          <a class="btn btn-outline w-full" href="/auth/google" style="margin-bottom:.5rem">
+            <i class="ri-google-fill" style="color:#db4437"></i> Đăng ký với Google
+          </a>
+          <a class="btn btn-outline w-full" href="/auth/facebook">
+            <i class="ri-facebook-circle-fill" style="color:#1877f2"></i> Đăng ký với Facebook
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
+
+<script>
+  // 👁 Toggle hiển thị mật khẩu
+  document.querySelectorAll(".toggle-password").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = document.getElementById(btn.getAttribute("data-target"));
+      if (target.type === "password") {
+        target.type = "text";
+        btn.textContent = "🙈";
+      } else {
+        target.type = "password";
+        btn.textContent = "👁";
+      }
+    });
+  });
+</script>
+
+<style>
+  .auth-split { margin: 2rem auto; }
+  .split-card { display: grid; grid-template-columns: 1.1fr 1fr; border: 1px solid var(--border); border-radius: 1.2rem; overflow: hidden; box-shadow: var(--shadow-md); background: var(--elev); }
+  .split-left { background: linear-gradient(180deg, #59e0c5, #24c1a5); color: #083a3a; padding: 2rem; display:flex; align-items:center; justify-content:center; }
+  .split-left .hero { max-width: 420px; text-align: center; }
+  .hero-illus { font-size: 3rem; margin-bottom: .6rem; }
+  .split-left h3 { margin: .3rem 0; font-size: 1.2rem; color: #0b3c3c; }
+  .split-left p { color: #0b544e; }
+  .dots { margin-top: 1.2rem; display:flex; gap:.3rem; justify-content:center; opacity:.7; }
+  .dots span { width:6px; height:6px; background:#0b544e; border-radius:50%; display:inline-block; }
+  .split-right { padding: 2rem; background: var(--elev); }
+  .header-row { display:flex; justify-content:flex-end; }
+  .split-title { margin: .2rem 0 1rem; color: var(--primary); }
+  .auth-form { display:flex; flex-direction:column; gap:.65rem; }
+  .header-row a { text-decoration:none; font-weight:700; color: var(--primary-700); background: var(--primary-100); padding:.35rem .8rem; border-radius:999px; border:1px solid var(--border); }
+  .header-row a:hover { background: var(--primary); color:#fff; border-color: var(--primary); }
+  .theme-dark .header-row a { color:#e6efff; background: rgba(255,255,255,0.08); border-color:#2a3b5c; }
+
+  /* === CÁC DÒNG DƯỚI ĐÂY ĐÃ BỊ XÓA VÌ ĐƯỢC main.css XỬ LÝ ===
+   .input-control { ... }
+   .input-control:focus { ... }
+  */
+
+  /* 👁 password wrapper */
+  .password-wrapper {
+    position: relative;
+  }
+  
+  /* Cần giữ lại .toggle-password vì nó nằm bên trong .password-wrapper */
+  .password-wrapper .toggle-password {
+    position: absolute;
+    right: .6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--muted);
+    transition: color .2s ease;
+  }
+
+  .toggle-password:hover {
+    color: var(--primary);
+  }
+
+  .btn.w-full { width: 100%; }
+
+  /* Alert flash */
+  .alert {
+    border-radius: .5rem;
+    padding: .75rem 1rem;
+    margin-bottom: .8rem;
+    animation: fadeIn .4s ease;
+  }
+
+  .alert.success {
+    background: #dcfce7;
+    color: #14532d;
+    border-left: 4px solid #22c55e;
+  }
+
+  .alert.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .auth.section {
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    
+    /* === ĐÃ XÓA .input-control ở chế độ dark === */
+    
+    .toggle-password {
+      color: #9ca3af;
+    }
+  }
+</style>

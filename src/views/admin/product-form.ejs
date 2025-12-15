@@ -1,0 +1,303 @@
+<% 
+  // 1. Kiểm tra xem đây là form Sửa hay Thêm mới
+  const isEditMode = !!product.id;
+
+  // 2. Quyết định 'action' của form (thêm CSRF token vào query string cho multipart form)
+  const formAction = isEditMode 
+    ? `/admin/products/edit/${product.id}?_csrf=${csrfToken}` 
+    : `/admin/products/new?_csrf=${csrfToken}`;
+%>
+
+<form action="<%= formAction %>" method="POST" enctype="multipart/form-data" class="admin-form-grid" data-animate="fade-up">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+
+  <div class="main-content">
+    <div class="admin-card glass-box">
+      <div class="form-group">
+        <label for="name">Tên sản phẩm</label>
+        <input type="text" id="name" name="name" 
+               value="<%= product.name || '' %>" required>
+      </div>
+
+      <div class="form-group">
+        <label for="slug">Slug (URL)</label>
+        <input type="text" id="slug" name="slug" 
+               value="<%= product.slug || '' %>" 
+               placeholder="Để trống để tự động tạo (khuyên dùng)">
+        </div>
+      
+      <div class="form-group">
+        <label for="description_short">Mô tả ngắn</label>
+        <textarea id="description_short" name="description_short" rows="3"><%= product.description_short || '' %></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Mô tả chi tiết</label>
+        <textarea id="description" name="description" rows="10"><%= product.description_long || product.description || '' %></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-content">
+    
+    <div class="admin-card glass-box">
+      <div class="form-group">
+        <label for="status">Trạng thái</label>
+        <select id="status" name="status">
+          <option value="active" <%= (!product.status || product.status === 'active') ? 'selected' : '' %>>
+            🟢 Hoạt động (Hiển thị)
+          </option>
+          <option value="draft" <%= (product.status === 'draft') ? 'selected' : '' %>>
+            🟡 Bản nháp (Ẩn)
+          </option>
+          <option value="archived" <%= (product.status === 'archived') ? 'selected' : '' %>>
+            🔴 Lưu trữ (Đã xóa)
+          </option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full">
+        <%= isEditMode ? 'Cập nhật sản phẩm' : 'Lưu (Thêm mới)' %>
+      </button>
+      
+      <% if (isEditMode) { %>
+        <a href="/admin/products" class="btn btn-outline w-full" style="margin-top: 0.5rem;">
+          Trở về danh sách
+        </a>
+      <% } %>
+    </div>
+
+    <div class="admin-card glass-box">
+      <div class="form-group">
+        <label for="category_id">Danh mục</label>
+        <select id="category_id" name="category_id">
+          <option value="">-- Chọn danh mục --</option>
+          <% (cats || []).forEach(cat => { %>
+            <option value="<%= cat.id %>" 
+                    <%= (product.category_id == cat.id) ? 'selected' : '' %>>
+              <%= cat.name %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Giá (₫)</label>
+        <input type="number" id="price" name="price" 
+               value="<%= product.price || 0 %>" min="0">
+      </div>
+      
+      <div class="form-group">
+        <label for="sale_price">Giá khuyến mãi (₫)</label>
+        <input type="number" id="sale_price" name="sale_price" 
+               value="<%= product.sale_price || 0 %>" min="0" 
+               placeholder="Để 0 nếu không giảm giá">
+      </div>
+
+      <div class="form-group">
+        <label for="stock_quantity">Số lượng kho</label>
+        <input type="number" id="stock_quantity" name="stock_quantity" 
+               value="<%= product.stock_quantity || 0 %>" min="0">
+      </div>
+    </div>
+    
+    <div class="admin-card glass-box">
+       <div class="form-group">
+        <label for="cover_image_file">📷 Ảnh bìa (Cover Image)</label>
+        <small style="display:block; margin-bottom:0.5rem; color:var(--muted);">
+          Tải ảnh từ máy tính hoặc nhập link ảnh
+        </small>
+        <input type="file" 
+               id="cover_image_file" 
+               name="cover_image_file" 
+               accept="image/*"
+               style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px; background:var(--bg); color:var(--text); margin-bottom:0.5rem;">
+        
+        <input type="text" 
+               id="cover_image_url" 
+               name="cover_image_url" 
+               value="<%= product.cover_image_url || '' %>" 
+               placeholder="Hoặc nhập link ảnh: https://...">
+        <% if (product.cover_image_url) { %>
+          <img src="<%= product.cover_image_url %>" class="form-image-preview" alt="Preview">
+        <% } %>
+      </div>
+      
+      <div class="form-group">
+        <label for="product_images">🖼️ Thêm nhiều ảnh cho sản phẩm</label>
+        <small style="display:block; margin-bottom:0.5rem; color:var(--muted);">
+          Chọn nhiều ảnh từ máy tính (có thể chọn nhiều file cùng lúc)
+        </small>
+        <input type="file" 
+               id="product_images" 
+               name="product_images" 
+               accept="image/*" 
+               multiple 
+               style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px; background:var(--bg); color:var(--text);">
+        
+        <!-- Preview ảnh đã chọn -->
+        <div id="imagePreview" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:0.5rem; margin-top:1rem;"></div>
+        
+        <% if (isEditMode && product.images && product.images.length > 0) { %>
+        <div style="margin-top:1rem;">
+          <strong>Ảnh hiện có:</strong>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:0.5rem; margin-top:0.5rem;">
+            <% product.images.forEach(img => { %>
+              <div style="position:relative;">
+                <img src="<%= img.url %>" 
+                     style="width:100%; height:100px; object-fit:cover; border-radius:6px; border:1px solid var(--border);"
+                     alt="<%= img.alt || '' %>"
+                     onerror="this.src='/public/img/placeholder.png'">
+              </div>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+</form>
+
+
+<style>
+  .admin-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px; /* Cột trái linh hoạt, cột phải cố định */
+    gap: 1.5rem;
+  }
+  .main-content {
+    grid-column: 1 / 2;
+  }
+  .sidebar-content {
+    grid-column: 2 / 3;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .admin-card {
+    background: var(--elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+  }
+  .theme-dark .admin-card {
+    background: #0f1b33; /* Hơi khác so với layout admin chính */
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  .form-group:last-child {
+    margin-bottom: 0;
+  }
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group input[type="email"],
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-100);
+    outline: none;
+  }
+  .theme-dark .form-group input,
+  .theme-dark .form-group textarea,
+  .theme-dark .form-group select {
+     background: rgba(255,255,255,0.05);
+     border-color: #2a3b5c;
+  }
+  .theme-dark .form-group input:focus,
+  .theme-dark .form-group textarea:focus,
+  .theme-dark .form-group select:focus {
+     box-shadow: 0 0 0 3px #122544;
+  }
+
+  .btn.w-full {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .form-image-preview {
+    width: 100%;
+    margin-top: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .admin-form-grid {
+      grid-template-columns: 1fr; /* Xếp chồng 2 cột */
+    }
+    .main-content {
+      grid-row: 2 / 3; /* Đẩy cột chính xuống dưới */
+    }
+    .sidebar-content {
+      grid-row: 1 / 2; 
+    }
+  }
+</style>
+
+<script>
+  // Preview ảnh khi chọn
+  document.getElementById('product_images')?.addEventListener('change', function(e) {
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = '';
+    
+    if (this.files && this.files.length > 0) {
+      Array.from(this.files).forEach((file, index) => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.cssText = 'width:100%; height:100px; object-fit:cover; border-radius:6px; border:1px solid var(--border);';
+            img.alt = file.name;
+            preview.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  });
+
+  // Preview ảnh bìa khi chọn file
+  document.getElementById('cover_image_file')?.addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.querySelector('.form-image-preview');
+        if (preview) {
+          preview.src = e.target.result;
+        } else {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'form-image-preview';
+          img.style.cssText = 'width:100%; margin-top:1rem; border-radius:6px; border:1px solid var(--border);';
+          document.getElementById('cover_image_file').parentNode.appendChild(img);
+        }
+      };
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+</script>

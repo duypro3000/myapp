@@ -1,0 +1,182 @@
+<div class="toolbar" data-animate="fade-up">
+  
+  <form method="get" class="admin-form-inline">
+    <input type="text" name="q" placeholder="Tìm mã đơn, email, tên..." 
+           value="<%= q || '' %>" class="input-q" />
+    
+    <select name="status" class="input-select">
+      <option value="">-- Lọc theo trạng thái --</option>
+      <option value="new" <%= (status === 'new') ? 'selected' : '' %>>Mới</option>
+      <option value="processing" <%= (status === 'processing') ? 'selected' : '' %>>Đang xử lý</option>
+      <option value="shipped" <%= (status === 'shipped') ? 'selected' : '' %>>Đã gửi</option>
+      <option value="delivered" <%= (status === 'delivered') ? 'selected' : '' %>>Đã giao</option>
+      <option value="cancelled" <%= (status === 'cancelled') ? 'selected' : '' %>>Đã hủy</option>
+    </select>
+    
+    <button class="btn btn-outline">Lọc / Tìm</button>
+  </form>
+</div>
+
+<div class="table-wrap" data-animate="fade-up" data-delay="150">
+  
+  <% if (!orders.length) { %>
+    <div class="alert muted" style="text-align: center; padding: 2rem;">
+      Không tìm thấy đơn hàng nào.
+    </div>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Khách hàng</th>
+          <th>Email</th>
+          <th>Ngày đặt</th>
+          <th>Tổng tiền</th>
+          <th>Trạng thái</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(o => { %>
+          <tr>
+            <td><strong><%= o.order_number %></strong></td>
+            <td><%= o.customer_name || 'Khách vãng lai' %></td>
+            <td><%= o.customer_email || 'N/A' %></td>
+            <td><%= new Date(o.created_at).toLocaleDateString('vi-VN') %></td>
+            
+            <td><%= o.grand_total.toLocaleString() %>₫</td>
+            
+            <td>
+              <% 
+                let label = o.status;
+                let cssClass = '';
+                switch(o.status) {
+                  case 'new': label = 'Mới'; cssClass = 'new'; break;
+                  case 'processing': label = 'Đang xử lý'; cssClass = 'processing'; break;
+                  case 'shipped': label = 'Đã gửi'; cssClass = 'shipped'; break;
+                  case 'delivered': label = 'Đã giao'; cssClass = 'delivered'; break;
+                  case 'cancelled': label = 'Đã hủy'; cssClass = 'cancelled'; break;
+                }
+              %>
+              <span class="status-badge <%= cssClass %>"><%= label %></span>
+            </td>
+
+            <td>
+              <a href="/admin/orders/<%= o.id %>" class="btn btn-outline small">Chi tiết</a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<% if (pages && pages > 1) { %>
+  <div class="pagination" data-animate="fade-up" data-delay="300">
+    <% for (let i = 1; i <= pages; i++) { %>
+      <a href="?q=<%= q %>&status=<%= status %>&page=<%= i %>" 
+         class="page-link <%= i === page ? 'active' : '' %>">
+         <%= i %>
+      </a>
+    <% } %>
+  </div>
+<% } %>
+
+
+<style>
+  .toolbar {
+    display: flex;
+    justify-content: flex-start; /* Form nằm bên trái */
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .admin-form-inline {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .admin-form-inline .input-q {
+    min-width: 250px;
+  }
+  .admin-form-inline input[type="text"],
+  .admin-form-inline select {
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--elev);
+    color: var(--text);
+  }
+  .admin-form-inline input[type="text"]:focus,
+  .admin-form-inline select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-100);
+    outline: none;
+  }
+
+  /* Tái sử dụng style từ products.ejs */
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 0.9rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    white-space: nowrap; /* Ngăn bảng bị vỡ */
+  }
+  th {
+    background: var(--primary-100);
+    font-weight: 700;
+  }
+  .theme-dark th { background: #122544; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(25, 118, 210, 0.04); }
+  .theme-dark tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+  .btn.small { padding: 0.3rem 0.6rem; font-size: 0.85rem; }
+
+  /* 🚀 NÂNG CẤP: Status Badges cho Đơn hàng */
+  .status-badge {
+    display: inline-block;
+    padding: .25rem .6rem;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: .8rem;
+    text-align: center;
+    min-width: 80px;
+  }
+  .status-badge.new { background: #e0e7ff; color: #4338ca; } /* Mới (info) */
+  .status-badge.processing { background: #fef9c3; color: #b45309; } /* Đang xử lý (warning) */
+  .status-badge.shipped { background: #cffafe; color: #0891b2; } /* Đã gửi (cyan) */
+  .status-badge.delivered { background: #dcfce7; color: #16a34a; } /* Đã giao (success) */
+  .status-badge.cancelled { background: #fee2e2; color: #dc2626; } /* Đã hủy (danger) */
+
+  /* Pagination */
+  .pagination {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+  }
+  .page-link {
+    padding: .6rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    text-decoration: none;
+    color: var(--text);
+    background: rgba(255,255,255,0.08);
+  }
+  .page-link:hover { background: var(--primary); color: #fff; }
+  .page-link.active {
+    background: var(--primary-700);
+    color: #fff;
+    border-color: var(--primary-700);
+  }
+</style>

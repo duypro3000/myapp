@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title><%= title ? `${title} — ${typeof appName !== 'undefined' ? appName : 'TechShop Blue'}` : (typeof appName !== 'undefined' ? appName : 'TechShop Blue') %> (Admin)</title>
+  
+  <script>
+    (() => {
+      try {
+        // Sử dụng logic 2-state (light/dark) từ main.js đã sửa
+        const saved = localStorage.getItem('theme') || 'light';
+        if (saved === 'dark') document.documentElement.classList.add('theme-dark');
+      } catch (err) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" media="all">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="/public/css/admin.css"/>
+  
+  <script defer src="/public/js/main.js"></script>
+</head>
+
+<body class="admin-body">
+
+<div class="admin-layout-wrapper">
+  <aside class="admin-sidebar" data-animate="fade-right">
+    <a class="logo" href="/admin">
+      Admin<span>Blue</span>
+    </a>
+    
+    <nav class="nav">
+      <a href="/admin" 
+         class="admin-nav-link <%= (title === 'Dashboard') ? 'active' : '' %>">
+         <i class="ri-dashboard-line"></i> Dashboard
+      </a>
+      
+      <span class="nav-group-title">Catalog</span>
+      <a href="/admin/products" 
+         class="admin-nav-link <%= (title === 'Sản phẩm') ? 'active' : '' %>">
+         <i class="ri-box-3-line"></i> Sản phẩm
+      </a>
+      <a href="/admin/categories" 
+         class="admin-nav-link <%= (title === 'Danh mục') ? 'active' : '' %>">
+         <i class="ri-folders-line"></i> Danh mục
+      </a>
+      
+      <span class="nav-group-title">Bán hàng</span>
+      <a href="/admin/orders" 
+         class="admin-nav-link <%= (title.includes('Đơn hàng')) ? 'active' : '' %>">
+         <i class="ri-shopping-cart-line"></i> Đơn hàng
+      </a>
+      
+      <a href="/admin/users" 
+         class="admin-nav-link <%= (title.includes('Khách hàng') || title.includes('Người dùng')) ? 'active' : '' %>">
+         <i class="ri-user-line"></i> Khách hàng
+      </a>
+
+      <a href="/" class="admin-nav-link separator">
+        <i class="ri-arrow-go-back-line"></i> Về trang chủ
+      </a>
+    </nav>
+  </aside>
+
+  <main class="admin-main-content">
+    
+    <% if (locals.flash && flash.success && flash.success.length) { %>
+      <div class="alert success" data-animate="fade-up">
+        <i class="ri-check-double-line"></i> <%= flash.success[0] %>
+      </div>
+    <% } %>
+    <% if (locals.flash && flash.error && flash.error.length) { %>
+      <div class="alert error" data-animate="fade-up">
+        <i class="ri-error-warning-line"></i> <%= flash.error[0] %>
+      </div>
+    <% } %>
+    
+    <h1 class="admin-page-title" data-animate="fade-up"><%= title %></h1>
+
+    <div class="admin-content-card" data-animate="fade-up" data-delay="100">
+      <%- body %>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>

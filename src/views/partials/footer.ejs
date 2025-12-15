@@ -1,0 +1,282 @@
+<footer class="footer">
+  <div class="container grid3 footer-grid">
+    <!-- Cột 1: Giới thiệu -->
+    <div class="footer-col">
+      <h4 class="footer-title"><%= typeof appName !== 'undefined' ? appName : 'TechShop Blue' %></h4>
+      <p>Phụ kiện công nghệ chính hãng – Giá tốt mỗi ngày.</p>
+      <div class="social-links">
+        <a href="https://facebook.com" target="_blank" rel="nofollow noopener" title="Facebook">
+          <i class="ri-facebook-circle-fill"></i>
+        </a>
+        <a href="https://zalo.me" target="_blank" rel="nofollow noopener" title="Zalo">
+          <i class="ri-message-3-fill"></i>
+        </a>
+        <a href="mailto:support@techshop.local" title="Email hỗ trợ">
+          <i class="ri-mail-fill"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Cột 2: Thông tin -->
+    <div class="footer-col">
+      <h4 class="footer-title">Thông tin</h4>
+      <ul>
+        <li><a href="/about">Về chúng tôi</a></li>
+        <li><a href="/contact">Liên hệ</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/privacy">Chính sách bảo mật</a></li>
+        <li><a href="/terms">Điều khoản sử dụng</a></li>
+      </ul>
+    </div>
+
+    <!-- Cột 3: Hỗ trợ -->
+    <div class="footer-col">
+      <h4 class="footer-title">Hỗ trợ</h4>
+      <p><i class="ri-mail-line"></i> support@techshop.local</p>
+      <p><i class="ri-phone-line"></i> 1900 123 456</p>
+      <p><i class="ri-map-pin-line"></i> 123 Nguyễn Văn Linh, TP. Hồ Chí Minh</p>
+    </div>
+  </div>
+
+  <div class="copy">
+    © <%= new Date().getFullYear() %> <strong><%= typeof appName !== 'undefined' ? appName : 'TechShop Blue' %></strong> — All rights reserved.
+  </div>
+</footer>
+</body>
+</html>
+
+<style>
+/* ===================== FOOTER STYLES ===================== */
+.footer {
+  margin-top: 2rem;
+  padding: 2rem 0 1.2rem;
+  background: linear-gradient(180deg, #062f57, #041e3a);
+  color: #cfe6ff;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.25);
+  position: relative;
+  z-index: 10;
+}
+
+.theme-dark .footer {
+  background: linear-gradient(180deg, #061a35, #010a17);
+  color: #c8ddff;
+}
+
+/* Grid layout */
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Columns */
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.footer-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: .6rem;
+  color: #fff;
+}
+
+/* Links */
+.footer a {
+  color: #d8ebff;
+  text-decoration: none;
+  transition: color .25s ease, transform .2s ease;
+}
+.footer a:hover {
+  color: #fff;
+  transform: translateX(4px);
+}
+
+/* Social icons */
+.social-links {
+  display: flex;
+  gap: .6rem;
+  margin-top: .6rem;
+}
+.social-links a {
+  font-size: 1.5rem;
+  color: #cfe6ff;
+  transition: color .25s ease, transform .25s ease;
+}
+.social-links a:hover {
+  color: #fff;
+  transform: scale(1.15);
+}
+
+/* Copy */
+.copy {
+  text-align: center;
+  font-size: .9rem;
+  color: #9cc7f7;
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding-top: .8rem;
+  margin-top: 1.5rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .footer {
+    text-align: center;
+  }
+  .footer a:hover { transform: none; }
+  .social-links { justify-content: center; }
+}
+
+</style>
+<!-- 💬 Floating Chat Bubble -->
+<div class="chat-bubble" id="chatBubble" title="Liên hệ hỗ trợ">
+  <i class="ri-message-3-fill"></i>
+</div>
+
+<!-- Floating Chat Panel -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <h4>Hỗ trợ khách hàng</h4>
+    <button id="chatClose"><i class="ri-close-line"></i></button>
+  </div>
+  <div class="chat-body">
+    <p>Xin chào 👋<br/>TechShop Blue có thể giúp gì cho bạn?</p>
+    <a href="https://zalo.me" target="_blank" class="chat-btn zalo">
+      <i class="ri-chat-smile-3-line"></i> Chat qua Zalo
+    </a>
+    <a href="https://m.me" target="_blank" class="chat-btn fb">
+      <i class="ri-messenger-fill"></i> Chat qua Messenger
+    </a>
+    <a href="mailto:support@techshop.local" class="chat-btn mail">
+      <i class="ri-mail-send-line"></i> Gửi email
+    </a>
+  </div>
+</div>
+
+<style>
+/* ===================== Floating Chat Bubble ===================== */
+.chat-bubble {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 58px;
+  height: 58px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 8px 20px rgba(25,118,210,0.3);
+  cursor: pointer;
+  z-index: 999;
+  transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+}
+.chat-bubble:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 24px rgba(25,118,210,0.45);
+}
+.theme-dark .chat-bubble {
+  background: #60a5fa;
+}
+
+/* ===================== Floating Chat Panel ===================== */
+.chat-panel {
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+  width: 280px;
+  background: var(--elev);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  transform: translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all .35s ease;
+  z-index: 998;
+}
+.chat-panel.active {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--primary);
+  color: #fff;
+  padding: .6rem 1rem;
+}
+.chat-header h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+.chat-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+
+.chat-body {
+  padding: 1rem;
+  color: var(--text);
+}
+.chat-body p {
+  margin-bottom: .8rem;
+  font-size: .95rem;
+}
+.chat-btn {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .6rem;
+  border-radius: .6rem;
+  text-decoration: none;
+  margin-bottom: .4rem;
+  transition: background .25s ease, transform .2s ease;
+}
+.chat-btn i { font-size: 1.3rem; }
+.chat-btn.zalo {
+  background: #0068ff;
+  color: #fff;
+}
+.chat-btn.fb {
+  background: #1877f2;
+  color: #fff;
+}
+.chat-btn.mail {
+  background: #f3f4f6;
+  color: #111;
+}
+.chat-btn:hover { transform: translateY(-2px); }
+
+@media (max-width: 768px) {
+  .chat-bubble { right: 18px; bottom: 18px; }
+  .chat-panel { right: 10px; width: 90%; }
+}
+</style>
+
+<script>
+  // Toggle chat panel
+  const bubble = document.getElementById('chatBubble');
+  const panel = document.getElementById('chatPanel');
+  const closeBtn = document.getElementById('chatClose');
+
+  bubble.addEventListener('click', () => {
+    panel.classList.toggle('active');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    panel.classList.remove('active');
+  });
+</script>

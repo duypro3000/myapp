@@ -1,0 +1,23 @@
+<%- include('./layout') %>
+
+<div class="admin-content">
+  <h1 data-animate="fade">👥 Quản lý khách hàng</h1>
+  <div class="table-wrap" data-animate="fade-up">
+    <table>
+      <thead>
+        <tr><th>Tên</th><th>Email</th><th>Số ĐT</th><th>Nhóm</th><th>Đơn hàng</th></tr>
+      </thead>
+      <tbody>
+        <% customers.forEach(c => { %>
+          <tr>
+            <td><%= c.full_name %></td>
+            <td><%= c.email %></td>
+            <td><%= c.phone || '-' %></td>
+            <td><span class="badge <%= c.group === 'VIP' ? 'success' : 'info' %>"><%= c.group %></span></td>
+            <td><a href="/admin/orders?customer_id=<%= c.id %>"><%= c.order_count %></a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>

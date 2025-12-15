@@ -1,0 +1,205 @@
+<div class="toolbar" data-animate="fade-up">
+  <a href="/admin/products/new" class="btn btn-primary">➕ Thêm sản phẩm</a>
+  
+  <form method="get" class="admin-form" style="display:inline-block;margin-left:1rem;">
+    <input type="text" name="q" placeholder="Tìm tên, slug..." value="<%= q || '' %>"/>
+    <button class="btn btn-outline">Tìm kiếm</button>
+  </form>
+</div>
+
+<div class="table-wrap" data-animate="fade-up" data-delay="150">
+  
+  <% if (!products.length) { %>
+    <div class="alert muted" style="text-align: center; padding: 2rem;">
+      Không tìm thấy sản phẩm nào.
+    </div>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Ảnh</th>
+          <th>Tên sản phẩm</th>
+          <th>Slug</th>
+          <th>Giá</th>
+          <th>Kho</th>
+          <th>Trạng thái</th>
+          <th style="width: 200px;">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% products.forEach(p => { %>
+          <tr>
+            <td>
+              <img src="<%= p.cover_image_url || '/public/img/placeholder.png' %>" 
+                   class="admin-table-thumb"
+                   alt="<%= p.name %>"/>
+            </td>
+            <td><strong><%= p.name %></strong></td>
+            <td><%= p.slug %></td>
+            <td><%= p.price.toLocaleString() %>₫</td>
+            
+            <td><%= p.stock_quantity || 0 %></td>
+            
+            <td>
+              <% if (p.status === 'active') { %>
+                <span class="status-badge active">Hoạt động</span>
+              <% } else if (p.status === 'draft') { %>
+                <span class="status-badge draft">Bản nháp</span>
+              <% } else if (p.status === 'archived') { %>
+                <span class="status-badge archived">Đã lưu trữ</span>
+              <% } else { %>
+                <span class="status-badge"><%= p.status %></span>
+              <% } %>
+            </td>
+
+            <td>
+              <a href="/admin/products/edit/<%= p.id %>" class="btn btn-outline small">Sửa</a>
+              
+              <% if (p.status === 'archived') { %>
+                <form action="/admin/products/unhide/<%= p.id %>" method="post" class="inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                  <button class="btn btn-outline small">Hiện</button>
+                </form>
+              <% } else { %>
+                <form action="/admin/products/hide/<%= p.id %>" method="post" class="inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                  <button class="btn btn-outline small">Ẩn</button>
+                </form>
+              <% } %>
+
+              <form action="/admin/products/delete/<%= p.id %>" method="post" class="inline"
+                    onsubmit="return confirm('Xóa vĩnh viễn sản phẩm? Hành động không thể hoàn tác.');">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+                <button class="btn btn-danger small">Xóa</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<% if (pages && pages > 1) { %>
+  <div class="pagination" data-animate="fade-up" data-delay="300">
+    <% for (let i = 1; i <= pages; i++) { %>
+      <a href="?q=<%= q %>&page=<%= i %>" 
+         class="page-link <%= i === page ? 'active' : '' %>">
+         <%= i %>
+      </a>
+    <% } %>
+  </div>
+<% } %>
+
+
+<style>
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .admin-form input {
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--elev);
+    color: var(--text);
+    min-width: 250px;
+  }
+  .admin-form input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-100);
+    outline: none;
+  }
+
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 0.9rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  th {
+    background: var(--primary-100);
+    font-weight: 700;
+  }
+  .theme-dark th {
+    background: #122544;
+  }
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+  tbody tr:hover {
+    background: rgba(25, 118, 210, 0.04);
+  }
+  .theme-dark tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .admin-table-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .btn.small {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  form.inline {
+    display: inline-block;
+    margin-left: 0.25rem;
+  }
+
+  /* Status Badges */
+  .status-badge {
+    display: inline-block;
+    padding: .25rem .6rem;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: .8rem;
+    background: #e5e7eb;
+    color: #374151;
+  }
+  .status-badge.active { background: #dcfce7; color: #16a34a; }
+  .status-badge.draft { background: #e0e7ff; color: #4338ca; }
+  .status-badge.archived { background: #fee2e2; color: #dc2626; }
+
+  /* Pagination (Lấy từ category.ejs) */
+  .pagination {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+  }
+  .page-link {
+    padding: .6rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    text-decoration: none;
+    color: var(--text);
+    background: rgba(255,255,255,0.08);
+    transition: all .3s;
+  }
+  .page-link:hover { background: var(--primary); color: #fff; }
+  .page-link.active {
+    background: var(--primary-700);
+    color: #fff;
+    border-color: var(--primary-700);
+  }
+</style>

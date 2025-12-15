@@ -1,0 +1,259 @@
+<header class="topbar">
+  <div class="container row between center">
+    <a class="logo" href="/">
+      TechShop<span>Blue</span>
+    </a>
+
+    <form class="search" action="/search" method="get" role="search" autocomplete="off">
+      <i class="ri-search-line search-icon"></i>
+      <input 
+        id="search-input" name="q" 
+        type="text" 
+        placeholder="Tìm phụ kiện công nghệ..." 
+        />
+      <button type="submit">Tìm</button>
+      <ul id="search-suggest" class="suggestions"></ul>
+    </form>
+
+    <nav class="nav">
+      <!-- Theme dropdown -->
+      <div class="dropdown">
+        <button id="themeToggle" class="link" type="button" title="Giao diện" data-dropdown-toggle="theme-menu">
+          <i class="ri-moon-line" id="themeToggleIcon"></i>
+        </button>
+        <div id="theme-menu" class="dropdown-menu">
+          <button type="button" data-set-theme="light"><i class="ri-sun-line"></i> Sáng</button>
+          <button type="button" data-set-theme="dark"><i class="ri-moon-line"></i> Tối</button>
+          <a href="/account#settings"><i class="ri-settings-3-line"></i> Cài đặt</a>
+        </div>
+      </div>
+
+      <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+        <!-- Account dropdown -->
+        <div class="dropdown">
+          <button class="link avatar-btn" data-dropdown-toggle="account-menu" title="Tài khoản">
+            <i class="ri-user-3-line"></i> <span class="hide-sm"><%= currentUser.full_name || currentUser.username %></span>
+          </button>
+          <div id="account-menu" class="dropdown-menu dropdown-right">
+            <a href="/account"><i class="ri-id-card-line"></i> Tài khoản</a>
+            <a href="/account/orders"><i class="ri-file-list-2-line"></i> Đơn hàng</a>
+            <% if (currentUser.role === 'admin') { %>
+              <a href="/admin"><i class="ri-dashboard-line"></i> Admin</a>
+            <% } %>
+            <form action="/logout" method="post">
+              <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"/>
+              <button type="submit" class="danger"><i class="ri-logout-box-r-line"></i> Đăng xuất</button>
+            </form>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="/login"><i class="ri-login-box-line"></i> Đăng nhập</a>
+        <a href="/register"><i class="ri-pencil-line"></i> Đăng ký</a>
+      <% } %>
+
+      <a href="/cart" class="hide-sm"><i class="ri-shopping-cart-2-line"></i> Giỏ hàng</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+/* ===================== HEADER STYLES ===================== */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(90deg, var(--primary), var(--primary-700));
+  color: #fff; padding: .8rem 0;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+  /* 🚀 LƯU Ý: main.js sẽ thêm class 'scrolled' khi cuộn */
+  transition: box-shadow .3s ease; 
+}
+.theme-dark .topbar {
+  background: linear-gradient(90deg, #0d1a36, #132a52);
+}
+
+/* 🚀 ĐÃ THÊM: Style cho topbar khi cuộn (từ logic của main.js) */
+.topbar.scrolled {
+  box-shadow: 0 8px 22px rgba(0,0,0,.12) !important;
+}
+.theme-dark .topbar.scrolled {
+  box-shadow: 0 8px 22px rgba(0,0,0,.35) !important;
+}
+
+.logo {
+  font-weight: 800;
+  letter-spacing: .3px;
+  color: #fff;
+  font-size: 1.3rem;
+  text-decoration: none;
+}
+.logo span {
+  color: #bfe0ff;
+}
+
+/* 🔍 Search Box */
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  flex: 1;
+  max-width: 400px;
+}
+.search-icon {
+  color: rgba(255,255,255,.8);
+  font-size: 1.2rem;
+}
+.search input {
+  flex: 1;
+  padding: .55rem .8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.4);
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  transition: all .25s ease;
+}
+.search input::placeholder {
+  color: rgba(255,255,255,.85);
+}
+.search input:focus {
+  background: #fff;
+  color: #0b3c6f;
+  border-color: var(--primary-700);
+  box-shadow: 0 0 0 3px var(--primary-100);
+}
+.search button {
+  background: #fff;
+  color: var(--primary-700);
+  border: none;
+  border-radius: 999px;
+  padding: .55rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+.search button:hover { transform: translateY(-1px); }
+
+/* Gợi ý tìm kiếm */
+.suggestions {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  list-style: none;
+  background: var(--elev);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: .6rem;
+  box-shadow: var(--shadow-md);
+  /* 🚀 ĐÃ SỬA: Dùng opacity + visibility thay vì display để có thể làm mờ */
+  opacity: 0;
+  visibility: hidden;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 999;
+  transition: opacity .2s ease, visibility .2s ease;
+}
+/* 🚀 ĐÃ THÊM: class 'show' được main.js thêm vào */
+.suggestions.show {
+  opacity: 1;
+  visibility: visible;
+}
+.suggestions li {
+  padding: .6rem .9rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.suggestions li:hover {
+  background: var(--primary-100);
+}
+.suggestions li a {
+  color: var(--text);
+  text-decoration: none;
+  display: block;
+}
+.theme-dark .suggestions li:hover {
+  background: var(--primary-100);
+}
+.theme-dark .suggestions li a {
+  color: var(--text);
+}
+
+
+/* 🧭 Navigation */
+.nav a,
+.nav button.link {
+  color: #fff;
+  margin-left: 1rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  opacity: .9;
+  text-decoration: none;
+  transition: opacity .2s, transform .2s;
+}
+.nav a:hover,
+.nav button.link:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+.nav .danger { color: #ffd1d1; }
+
+/* Dropdown */
+.dropdown { position: relative; display: inline-block; }
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 180px;
+  background: var(--elev);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: .6rem;
+  box-shadow: var(--shadow-lg);
+  padding: .4rem;
+  display: none;
+  z-index: 1000;
+}
+.dropdown-right { right: 0; left: auto; }
+.dropdown-menu a, .dropdown-menu button {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+  padding: .5rem .6rem;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: .4rem;
+}
+.dropdown-menu a:hover, .dropdown-menu button:hover {
+  background: var(--primary-100);
+}
+.dropdown-menu .danger { color: #dc2626; }
+.dropdown.show .dropdown-menu { display: block; }
+.avatar-btn { display: inline-flex; align-items: center; gap: .4rem; }
+.hide-sm { display: inline; }
+@media (max-width: 900px) { .hide-sm { display: none; } }
+
+/* 🌗 Theme Toggle */
+#themeToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .4rem;
+  border-radius: .6rem;
+  transition: background .25s ease;
+}
+#themeToggle:hover {
+  background: rgba(255,255,255,.15);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .search { display: none; }
+  .nav { flex-wrap: wrap; justify-content: flex-end; }
+}
+</style>

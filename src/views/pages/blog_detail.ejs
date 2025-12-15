@@ -1,0 +1,79 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section blog-detail" data-animate="fade">
+  <article class="blog glass-box" data-animate="zoom-in" data-duration="800">
+    <h1 class="blog-title"><%= post.title %></h1>
+    <img src="<%= post.cover_image_url || '/public/img/placeholder.png' %>" 
+         alt="<%= post.title %>" 
+         class="blog-cover" 
+         data-animate="fade-up"/>
+    <div class="blog-content content" data-animate="fade-up">
+      <%- post.content %>
+    </div>
+  </article>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  .blog-detail {
+    max-width: 900px;
+    margin: 2rem auto;
+  }
+
+  .glass-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+  }
+
+  .blog-title {
+    font-size: 2rem;
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 1.4rem;
+  }
+
+  .blog-cover {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: .8rem;
+    margin-bottom: 1.4rem;
+    border: 1px solid var(--border);
+  }
+
+  .blog-content {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: var(--text); /* Dòng này đã xử lý Sáng/Tối */
+  }
+
+  .blog-content h2 {
+    color: var(--primary-700);
+    margin-top: 1.8rem;
+  }
+
+  .blog-content a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  .blog-content a:hover { text-decoration: underline; }
+
+  @media (prefers-color-scheme: dark) {
+    .glass-box {
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    /* === Đã xóa .blog-content color ở đây vì không cần thiết === */
+  }
+
+  @media (max-width: 768px) {
+    .glass-box { padding: 1.4rem 1.6rem; }
+    .blog-title { font-size: 1.6rem; }
+  }
+</style>

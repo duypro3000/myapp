@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="theme-color" content="#1976d2"/>
+  <meta name="description" content="<%= typeof description !== 'undefined' ? description : 'TechShop Blue - Phụ kiện công nghệ chính hãng, giá tốt mỗi ngày' %>"/>
+  <meta name="keywords" content="phụ kiện, công nghệ, tai nghe, chuột, bàn phím, TechShop Blue"/>
+  <meta name="author" content="TechShop Blue"/>
+
+  <title><%= title ? `${title} — ${typeof appName !== 'undefined' ? appName : 'TechShop Blue'}` : (typeof appName !== 'undefined' ? appName : 'TechShop Blue') %></title>
+  
+  <link rel="canonical" href="<%= typeof currentUrl !== 'undefined' ? currentUrl : 'https://yourwebsite.com' %>" />
+
+  <link rel="icon" href="/public/img/favicon.ico" type="image/x-icon"/>
+  <link rel="apple-touch-icon" href="/public/img/placeholder.png"/>
+  <meta name="apple-mobile-web-app-title" content="TechShop Blue"/>
+
+  <% const appNameValue = typeof appName !== 'undefined' ? appName : 'TechShop Blue'; %>
+  <% const defaultOgTitle = title ? `${title} — ${appNameValue}` : appNameValue; %>
+  <% const defaultOgDesc = typeof description !== 'undefined' ? description : 'TechShop Blue - Phụ kiện công nghệ chính hãng, giá tốt mỗi ngày'; %>
+  <% const defaultOgImage = typeof ogImage !== 'undefined' ? ogImage : 'https://yourwebsite.com/public/img/og-image.png'; %>
+  <% const pageUrl = typeof currentUrl !== 'undefined' ? currentUrl : 'https://yourwebsite.com'; %>
+
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="<%= pageUrl %>"/>
+  <meta property="og:title" content="<%= defaultOgTitle %>"/>
+  <meta property="og:description" content="<%= defaultOgDesc %>"/>
+  <meta property="og:image" content="<%= defaultOgImage %>"/>
+  
+  <meta property="twitter:card" content="summary_large_image"/>
+  <meta property="twitter:url" content="<%= pageUrl %>"/>
+  <meta property="twitter:title" content="<%= defaultOgTitle %>"/>
+  <meta property="twitter:description" content="<%= defaultOgDesc %>"/>
+  <meta property="twitter:image" content="<%= defaultOgImage %>"/>
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem('theme'); // 'light' | 'dark' | 'system'
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = (saved === 'dark') || (saved === 'system' && prefersDark) || (!saved && prefersDark);
+        if (isDark) document.documentElement.classList.add('theme-dark');
+      } catch (err) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" media="all">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Swiper (cho carousel hero) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+
+  <link rel="stylesheet" href="/public/css/main.css" integrity="" crossorigin="anonymous"/>
+  <script defer src="/public/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js" defer></script>
+
+  <link rel="manifest" href="/manifest.json">
+  <meta name="application-name" content="TechShop Blue">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <noscript>
+    <style>
+      [data-animate] { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
+</head>
+<body>

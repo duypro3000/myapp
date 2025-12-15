@@ -1,0 +1,94 @@
+<div class="toolbar" data-animate="fade-up">
+  <div class="flex-spacer"></div> <form method="get" class="admin-form-inline">
+    <input type="text" name="q" placeholder="Tìm email, username, tên..." 
+           value="<%= q || '' %>" class="input-q" />
+    <button class="btn btn-outline">Tìm kiếm</button>
+  </form>
+</div>
+
+<div class="table-wrap" data-animate="fade-up" data-delay="150">
+  
+  <% if (!users.length) { %>
+    <div class="alert muted" style="text-align: center; padding: 2rem;">
+      Không tìm thấy người dùng nào.
+    </div>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Họ tên</th>
+          <th>Email</th>
+          <th>Username</th>
+          <th>Quyền</th>
+          <th>Trạng thái</th>
+          <th>Ngày tham gia</th>
+          <th style="width: 100px;">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+          <tr>
+            <td><strong><%= user.full_name || '(Chưa cập nhật)' %></strong></td>
+            <td><%= user.email %></td>
+            <td><%= user.username %></td>
+            
+            <td>
+              <% if (user.role === 'admin') { %>
+                <span class="status-badge admin">Admin</span>
+              <% } else { %>
+                <span class="status-badge customer">Customer</span>
+              <% } %>
+            </td>
+
+            <td>
+              <% if (user.is_active) { %>
+                <span class="status-badge active">Hoạt động</span>
+              <% } else { %>
+                <span class="status-badge inactive">Đã khóa</span>
+              <% } %>
+            </td>
+            
+            <td><%= new Date(user.created_at).toLocaleDateString('vi-VN') %></td>
+
+            <td>
+              <a href="/admin/users/edit/<%= user.id %>" class="btn btn-outline small">Sửa</a>
+              </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<% if (pages && pages > 1) { %>
+  <div class="pagination" data-animate="fade-up" data-delay="300">
+    <% for (let i = 1; i <= pages; i++) { %>
+      <a href="?q=<%= q %>&page=<%= i %>" 
+         class="page-link <%= i === page ? 'active' : '' %>">
+         <%= i %>
+      </a>
+    <% } %>
+  </div>
+<% } %>
+
+
+<style>
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .flex-spacer { flex: 1; }
+  
+  .admin-form-inline {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .admin-form-inline .input-q {
+    min-width: 250px;
+  }
+
+  .status-badge.admin { background: #e0e7ff; color: #4338ca; }
+  .status-badge.customer { background: #f3f4f6; color: #374151; }
+</style>

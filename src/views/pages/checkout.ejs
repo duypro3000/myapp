@@ -1,0 +1,152 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section checkout-page" data-animate="fade">
+  <h2 class="section-title" data-animate="fade-up">💳 Thanh toán</h2>
+
+  <form action="/checkout" method="post" class="checkout-form glass-box" data-animate="fade-up" data-duration="700">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+
+    <div class="grid2">
+      <div class="checkout-left">
+        <h3 class="step-title" data-animate="fade">1️⃣ Thông tin giao hàng</h3>
+        <label>Họ tên
+          <input name="full_name" required placeholder="Nguyễn Văn A"/>
+        </label>
+        <label>Số điện thoại
+          <input name="phone" required placeholder="090xxxxxxx"/>
+        </label>
+        <label>Địa chỉ
+          <input name="address_line1" required placeholder="Số nhà, tên đường..."/>
+        </label>
+
+        <div class="grid3">
+          <label>Tỉnh/TP<input name="province" placeholder="TP. Hồ Chí Minh"/></label>
+          <label>Quận/Huyện<input name="district" placeholder="Quận 1"/></label>
+          <label>Phường/Xã<input name="city" placeholder="Phường Bến Nghé"/></label>
+        </div>
+
+        <h3 class="step-title" data-animate="fade-up">2️⃣ Phương thức vận chuyển</h3>
+        <div class="shipping-options">
+          <label><input type="radio" name="shipping_method" value="standard" checked/> 🚚 Tiêu chuẩn (2–4 ngày) — 20.000₫</label>
+          <label><input type="radio" name="shipping_method" value="express"/> ⚡ Hỏa tốc (1–2 ngày) — 50.000₫</label>
+        </div>
+      </div>
+
+      <div class="checkout-right" data-animate="fade-up" data-delay="100">
+        <h3 class="step-title">3️⃣ Thanh toán</h3>
+        <label><input type="radio" name="payment_method" value="cod" checked/> 💵 Thanh toán khi nhận hàng (COD)</label>
+        <label><input type="radio" name="payment_method" value="bank_transfer"/> 🏦 Chuyển khoản ngân hàng</label>
+        <label><input type="radio" name="payment_method" value="vnpay"/> 💳 VNPay</label>
+
+        <h3 class="step-title" style="margin-top:1rem;">🧾 Tóm tắt đơn hàng</h3>
+        <ul class="order-items">
+          <% items.forEach(it => { %>
+            <li>
+              <img src="<%= it.image_url || '/public/img/placeholder.png' %>" class="thumb"/>
+              <span><%= it.product_name %> × <%= it.quantity %></span>
+              <strong><%= (Number(it.price_at)*it.quantity).toLocaleString() %>₫</strong>
+            </li>
+          <% }) %>
+        </ul>
+
+        <div class="summary-line"><span>Tạm tính:</span><strong><%= subtotal.toLocaleString() %>₫</strong></div>
+        <div class="summary-line"><span>Phí ship:</span><strong id="ship-fee">20,000₫</strong></div>
+        <div class="summary-line total"><span>Tổng cộng:</span><strong id="total"><%= (subtotal + 20000).toLocaleString() %>₫</strong></div>
+
+        <button class="btn btn-primary w-full" type="submit" data-animate="zoom-in">✅ Đặt hàng</button>
+      </div>
+    </div>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>
+
+<script>
+  // 🧮 Tính lại tổng khi chọn phương thức giao hàng
+  const radios = document.querySelectorAll('input[name="shipping_method"]');
+  const subtotal = Number('<%= subtotal %>');
+  const totalEl = document.getElementById('total');
+  const shipFeeEl = document.getElementById('ship-fee');
+
+  radios.forEach(r => r.addEventListener('change', () => {
+    let ship = r.value === 'express' ? 50000 : 20000;
+    shipFeeEl.innerText = ship.toLocaleString() + '₫';
+    totalEl.innerText = (subtotal + ship).toLocaleString() + '₫';
+  }));
+</script>
+
+<style>
+  /* CSS của bạn ở đây... (giữ nguyên không đổi) */
+  .checkout-page { max-width: 1100px; margin: 2rem auto; }
+  .glass-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+  }
+  .checkout-form label {
+    display: block;
+    margin-bottom: .8rem;
+    font-weight: 500;
+  }
+  
+  /* === ĐÃ XÓA QUY TẮC input, select VÀ input:focus, select:focus VÌ ĐÃ CÓ TRONG main.css === */
+  
+  .step-title {
+    font-size: 1.2rem;
+    color: var(--primary);
+    margin: 1.2rem 0 .6rem;
+  }
+  .shipping-options label {
+    display: block;
+    padding: .4rem 0;
+  }
+  .checkout-right {
+    background: rgba(255,255,255,0.05);
+    padding: 1.4rem 1.8rem;
+    border-radius: .8rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+  .order-items {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+  .order-items li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding: .5rem 0;
+  }
+  .order-items .thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: .3rem;
+    margin-right: .6rem;
+  }
+  .summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin: .4rem 0;
+    font-size: 1rem;
+  }
+  .summary-line.total {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--primary-700);
+  }
+  .w-full { width: 100%; margin-top: 1rem; }
+  @media (prefers-color-scheme: dark) {
+    .glass-box { background: rgba(255,255,255,0.05); }
+    /* === ĐÃ XÓA QUY TẮC input, select Ở CHẾ ĐỘ TỐI === */
+  }
+  @media (max-width: 768px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .checkout-right { margin-top: 2rem; }
+  }
+</style>

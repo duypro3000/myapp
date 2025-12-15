@@ -1,0 +1,98 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section static-page" data-animate="fade">
+  <article class="post glass-box" data-animate="zoom-in" data-duration="800">
+    <h1 class="static-title"><%= title %></h1>
+    <div class="content">
+      <%- content %>
+    </div>
+  </article>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  /* 🔹 Static page styling (About, Policies, etc.) */
+  .static-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+
+  .glass-box {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+  }
+
+  .static-title {
+    text-align: center;
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+  }
+
+  .content {
+    line-height: 1.7;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+
+  .content h2 {
+    margin-top: 1.6rem;
+    color: var(--primary-700);
+    font-size: 1.3rem;
+  }
+
+  .content p {
+    margin: .8rem 0;
+  }
+
+  .content ul, .content ol {
+    margin: 0 0 1rem 1.2rem;
+  }
+
+  .content li {
+    margin-bottom: .4rem;
+  }
+
+  .content a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .content a:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    .glass-box {
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .content {
+      color: #e5e7eb;
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .glass-box {
+      padding: 1.4rem 1.6rem;
+    }
+    .static-title {
+      font-size: 1.6rem;
+    }
+  }
+</style>

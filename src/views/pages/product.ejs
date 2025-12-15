@@ -1,0 +1,188 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section product-page" data-animate="fade">
+  <div class="product glass-box" data-animate="fade-up">
+    <!-- Gallery -->
+    <div class="gallery">
+      <img src="<%= product.cover_image_url || '/public/img/placeholder.png' %>" 
+           id="mainImage" 
+           alt="<%= product.name %>" 
+           class="main-img"/>
+
+      <% if (product.images && product.images.length) { %>
+      <div class="thumbs" data-animate="fade-up" data-delay="100">
+        <% product.images.forEach(img => { %>
+          <img src="<%= img.url || img %>" 
+               onclick="document.getElementById('mainImage').src=this.src" 
+               alt="<%= img.alt || product.name %>"/>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Info -->
+    <div class="info" data-animate="fade-left">
+      <h1 class="product-title"><%= product.name %></h1>
+      <p class="muted">Thương hiệu: <strong><%= product.brand || 'Đang cập nhật' %></strong></p>
+
+      <!-- Price -->
+      <div class="price">
+        <% if (product.sale_price) { %>
+          <span class="old"><%= product.price.toLocaleString() %>₫</span>
+          <span class="now"><%= product.sale_price.toLocaleString() %>₫</span>
+          <span class="sale-tag">-<%= Math.round(100 - (product.sale_price / product.price * 100)) %>%</span>
+        <% } else { %>
+          <span class="now"><%= product.price.toLocaleString() %>₫</span>
+        <% } %>
+      </div>
+
+      <!-- Add to cart -->
+      <form method="post" action="/cart/add" data-animate="fade-up" data-delay="100" class="cart-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+        <input type="hidden" name="product_id" value="<%= product.id %>"/>
+        <div class="row between center">
+          <label>Số lượng
+            <input type="number" name="quantity" min="1" value="1" class="qty-input"/>
+          </label>
+          <button class="btn btn-primary">🛒 Thêm vào giỏ hàng</button>
+        </div>
+      </form>
+
+      <!-- Wishlist -->
+      <a href="/wishlist/add/<%= product.id %>" 
+         class="btn btn-outline" 
+         style="margin-top:.8rem" 
+         data-animate="fade-up" 
+         data-delay="200">
+        💙 Thêm vào yêu thích
+      </a>
+
+      <!-- Description -->
+      <div class="desc" data-animate="fade-up" data-delay="300">
+        <h3>Mô tả sản phẩm</h3>
+        <p><%- product.description_long || product.description || 'Đang cập nhật mô tả sản phẩm...' %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related products -->
+  <div class="related section" data-animate="fade">
+    <h2 class="section-title">🛍️ Sản phẩm liên quan</h2>
+    <div class="grid4" data-skeleton="true">
+      <% related.forEach((p,i) => { %>
+        <div data-animate="fade-up" data-delay="<%= i * 80 %>">
+          <%- include('../partials/product-card', { p, csrfToken }) %>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  /* Layout */
+  .product {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 2rem;
+    margin-top: 1rem;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    background: var(--elev);
+  }
+
+  .main-img {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    object-fit: cover;
+  }
+
+  .thumbs {
+    display: flex;
+    gap: .6rem;
+    margin-top: .8rem;
+  }
+
+  .thumbs img {
+    width: 80px;
+    height: 80px;
+    border: 1px solid var(--border);
+    border-radius: .6rem;
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease;
+    background: var(--elev);
+    object-fit: cover;
+  }
+
+  .thumbs img:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .product-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: .4rem;
+  }
+
+  .price {
+    font-size: 1.4rem;
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+  }
+
+  .price .old {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+
+  .price .now {
+    font-weight: 800;
+    color: var(--primary-700);
+  }
+
+  .sale-tag {
+    background: #ef4444;
+    color: #fff;
+    font-weight: 700;
+    padding: .2rem .5rem;
+    border-radius: .4rem;
+    font-size: .9rem;
+  }
+
+  .cart-form .qty-input {
+    width: 70px;
+    padding: .4rem;
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    background: var(--elev);
+    color: var(--text);
+  }
+
+  .desc {
+    margin-top: 1rem;
+  }
+
+  .desc h3 {
+    margin-bottom: .4rem;
+    color: var(--primary);
+  }
+
+  /* Responsive */
+  @media (max-width: 850px) {
+    .product {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .theme-dark .price .now {
+    color: #dbe8ff;
+  }
+</style>

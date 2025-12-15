@@ -1,0 +1,127 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section category-page" data-animate="fade">
+  <h2 class="section-title" data-animate="fade-up">📂 Danh mục: <%= slug %></h2>
+
+  <form class="filter glass-box row between center" method="get" data-animate="fade-up" data-duration="700">
+    <div class="row gap">
+      <input type="number" name="min_price" placeholder="Giá từ" value="<%= query.min_price || '' %>"/>
+      <input type="number" name="max_price" placeholder="Giá đến" value="<%= query.max_price || '' %>"/>
+      <select name="sort">
+        <option value="">Mới nhất</option>
+        <option value="best" <%= query.sort==='best'?'selected':'' %>>Bán chạy</option>
+        <option value="price_asc" <%= query.sort==='price_asc'?'selected':'' %>>Giá tăng dần</option>
+        <option value="price_desc" <%= query.sort==='price_desc'?'selected':'' %>>Giá giảm dần</option>
+      </select>
+      <button class="btn btn-primary">Lọc</button>
+    </div>
+
+    <% if (total > 0) { %>
+      <div class="muted">Tổng <%= total %> sản phẩm</div>
+    <% } %>
+  </form>
+
+  <% if (items.length) { %>
+  <div class="grid4" data-skeleton="true">
+    <% items.forEach((p, i) => { %>
+      <div data-animate="fade-up" data-delay="<%= i * 80 %>">
+        <%- include('../partials/product-card', { p, csrfToken }) %>
+      </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+    <div class="empty glass-box" data-animate="zoom-in">
+      <img src="/public/img/empty-box.svg" alt="Không có sản phẩm" class="empty-img"/>
+      <p>Không có sản phẩm nào trong danh mục này.</p>
+    </div>
+  <% } %>
+
+  <% if (pages && pages > 1) { %>
+    <div class="pagination" data-animate="fade-up" data-delay="200">
+      <% for (let i = 1; i <= pages; i++) { %>
+        <a href="?page=<%= i %>" class="page-link <%= i === page ? 'active' : '' %>"><%= i %></a>
+      <% } %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  .category-page { max-width: 1100px; margin: 2rem auto; }
+
+  .glass-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+  }
+
+  /* === SỬA LỖI Ở ĐÂY (LIGHT MODE) === */
+  .filter input, .filter select {
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    background: var(--elev); /* Sửa lỗi */
+    color: var(--text); /* Thêm dòng này */
+    font-size: .95rem;
+  }
+
+  .filter input:focus, .filter select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(25,118,210,0.25);
+  }
+
+  .filter .row.gap { display: flex; flex-wrap: wrap; gap: .6rem; }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 2rem;
+  }
+  .empty-img {
+    width: 180px;
+    opacity: .9;
+    margin-bottom: 1rem;
+  }
+
+  /* Pagination */
+  .pagination {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+  }
+
+  .page-link {
+    padding: .6rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: .4rem;
+    text-decoration: none;
+    color: var(--text);
+    background: rgba(255,255,255,0.08);
+    transition: all .3s;
+  }
+
+  .page-link:hover { background: var(--primary); color: #fff; }
+  .page-link.active {
+    background: var(--primary-700);
+    color: #fff;
+    border-color: var(--primary-700);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .glass-box { background: rgba(255,255,255,0.05); }
+  }
+
+  @media (max-width: 768px) {
+    .grid4 { grid-template-columns: repeat(2, 1fr); }
+    .filter .row.gap { flex-direction: column; width: 100%; }
+    .filter input, .filter select { width: 100%; }
+  }
+</style>

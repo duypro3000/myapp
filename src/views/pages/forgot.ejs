@@ -1,0 +1,98 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container auth section" data-animate="fade">
+  <h2 class="section-title" data-animate="fade-up">🔐 Quên mật khẩu</h2>
+
+  <% if (locals.flash && flash.success && flash.success.length) { %>
+    <div class="alert success" data-animate="fade-up">
+      <%= flash.success[0] %>
+    </div>
+  <% } %>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert error" data-animate="fade-up"><%= error %></div>
+  <% } %>
+
+  <form method="post"
+        class="auth-form glass-box"
+        data-animate="fade-up"
+        data-duration="700">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+
+    <label>Email</label>
+    <input type="email"
+           name="email"
+           required
+           placeholder="you@example.com"/>
+
+    <button class="btn btn-primary w-full" data-animate="zoom-in">Gửi liên kết đặt lại</button>
+
+    <p class="muted text-center" style="margin-top:1rem">
+      Nhớ mật khẩu rồi? <a href="/login" class="link">Đăng nhập</a>
+    </p>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  /* 🔹 Forgot Password Styles */
+  .auth.section {
+    max-width: 420px;
+    margin: 2rem auto;
+    padding: 2rem 2.5rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+  }
+
+  .auth h2.section-title {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 1.4rem;
+  }
+
+  /* === CÁC DÒNG DƯỚI ĐÂY ĐÃ BỊ XÓA VÌ ĐƯỢC main.css XỬ LÝ ===
+   .input-control { ... }
+   .input-control:focus { ... }
+  */
+
+  .btn.w-full { width: 100%; }
+
+  /* Flash messages */
+  .alert {
+    border-radius: .5rem;
+    padding: .75rem 1rem;
+    margin-bottom: .8rem;
+    animation: fadeIn .4s ease;
+  }
+
+  .alert.success {
+    background: #dcfce7;
+    color: #14532d;
+    border-left: 4px solid #22c55e;
+  }
+
+  .alert.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    .auth.section {
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+  }
+</style>

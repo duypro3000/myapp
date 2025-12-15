@@ -1,0 +1,290 @@
+<%
+  // === Logic giá & giảm giá ===
+  const hasSale = Number(p.sale_price || 0) > 0 && Number(p.sale_price) < Number(p.price || 0);
+  const cover = p.cover_image_url || '/public/img/placeholder.png';
+  const finalPrice = Number(p.sale_price || p.flash_price || p.price || 0);
+  const oldPrice   = Number(p.price || 0);
+  const discount   = hasSale ? Math.max(1, Math.round((1 - finalPrice / oldPrice) * 100)) : 0;
+%>
+
+<article class="product-card" data-animate="fade-up">
+  <!-- MEDIA -->
+  <div class="pc-media">
+    <% if (hasSale) { %>
+      <span class="pc-badge">-<%= discount %>%</span>
+    <% } %>
+
+    <a href="/p/<%= p.slug %>" class="pc-thumb" title="<%= p.name %>">
+      <img src="<%= cover %>" alt="<%= p.name %>" loading="lazy" class="pc-img"/>
+    </a>
+  </div>
+
+  <!-- INFO -->
+  <div class="pc-info">
+    <a href="/p/<%= p.slug %>" class="pc-title" title="<%= p.name %>"><%= p.name %></a>
+    <div class="pc-price">
+      <% if (hasSale) { %>
+        <span class="pc-price__now"><%= finalPrice.toLocaleString() %>₫</span>
+        <span class="pc-price__old"><%= oldPrice.toLocaleString() %>₫</span>
+      <% } else { %>
+        <span class="pc-price__now"><%= (p.price || 0).toLocaleString() %>₫</span>
+      <% } %>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="pc-actions">
+      <form action="/cart/add" method="post" class="pc-cart-form" data-product-id="<%= p.id %>">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+        <input type="hidden" name="product_id" value="<%= p.id %>"/>
+        <input type="hidden" name="quantity" value="1"/>
+        <button type="submit" class="pc-btn pc-btn-primary">
+          <i class="ri-shopping-cart-2-line"></i>
+          <span>Thêm vào giỏ hàng</span>
+        </button>
+      </form>
+      <a href="/p/<%= p.slug %>" class="pc-btn pc-btn-secondary">
+        <i class="ri-eye-line"></i>
+        <span>Xem chi tiết</span>
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+/* ===================== PRODUCT CARD PROFESSIONAL DESIGN ===================== */
+
+.product-card {
+  background: var(--elev);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(25, 118, 210, 0.2);
+  border-color: rgba(25, 118, 210, 0.3);
+}
+
+/* Image & Media */
+.pc-media {
+  position: relative;
+  padding: 12px;
+  padding-bottom: 0;
+  background: #fafbfc;
+  overflow: hidden;
+}
+
+.theme-dark .pc-media {
+  background: #0a1629;
+}
+
+.pc-thumb {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: var(--elev);
+}
+
+.pc-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #f5f7fa;
+}
+
+.product-card:hover .pc-img {
+  transform: scale(1.05);
+}
+
+/* Badge giảm giá */
+.pc-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 3;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  box-shadow: 0 4px 12px rgba(238, 90, 82, 0.4);
+  letter-spacing: 0.3px;
+}
+
+/* Info Section */
+.pc-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 12px;
+}
+
+.pc-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--text);
+  min-height: 2.8em;
+  margin: 0;
+}
+
+.pc-title:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.pc-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+.pc-price__now {
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--primary-700);
+  letter-spacing: -0.3px;
+}
+
+.pc-price__old {
+  color: var(--muted);
+  text-decoration: line-through;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Action Buttons */
+.pc-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.pc-cart-form {
+  margin: 0;
+  width: 100%;
+}
+
+.pc-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pc-btn i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.pc-btn span {
+  white-space: nowrap;
+}
+
+.pc-btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-600));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.pc-btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4);
+  transform: translateY(-1px);
+}
+
+.pc-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+}
+
+.pc-btn-secondary {
+  background: var(--elev);
+  color: var(--primary-700);
+  border: 1.5px solid var(--border);
+}
+
+.pc-btn-secondary:hover {
+  background: var(--primary-100);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.pc-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Dark mode tweaks */
+.theme-dark .product-card:hover {
+  border-color: rgba(96, 165, 250, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.theme-dark .pc-title {
+  color: #e6efff;
+}
+
+.theme-dark .pc-price__now {
+  color: #60a5fa;
+}
+
+.theme-dark .pc-btn-secondary {
+  background: var(--elev);
+  color: #60a5fa;
+  border-color: var(--border);
+}
+
+.theme-dark .pc-btn-secondary:hover {
+  background: rgba(96, 165, 250, 0.1);
+  border-color: rgba(96, 165, 250, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .pc-btn {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.85rem;
+  }
+  
+  .pc-btn span {
+    font-size: 0.85rem;
+  }
+  
+  .pc-price__now {
+    font-size: 1.05rem;
+  }
+}
+</style>

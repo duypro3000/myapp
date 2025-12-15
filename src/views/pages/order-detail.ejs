@@ -1,0 +1,221 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container section order-detail-page" data-animate="fade">
+  <h2 class="section-title" data-animate="fade-up">Chi tiết Đơn hàng #<%= order.order_number %></h2>
+
+  <%
+    // Helper (Hàm hỗ trợ) để dịch trạng thái
+    const translateStatus = (status) => {
+      switch(status) {
+        case 'new': return 'Mới';
+        case 'processing': return 'Đang xử lý';
+        case 'shipped': return 'Đã gửi';
+        case 'delivered': return 'Đã giao';
+        case 'cancelled': return 'Đã hủy';
+        default: return status;
+      }
+    };
+  %>
+
+  <div class="admin-form-grid" data-animate="fade-up" data-delay="100">
+
+    <div class="main-content">
+      <div class="admin-card glass-box">
+        <h4>Các sản phẩm đã mua</h4>
+        
+        <div class="table-wrap minimal">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="2">Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% order.items.forEach(item => { %>
+                <tr>
+                  <td>
+                    <img src="<%= item.cover_image_url || '/public/img/placeholder.png' %>" 
+                         class="admin-table-thumb" alt="<%= item.product_name %>">
+                  </td>
+                  <td>
+                    <a href="/p/<%= item.product_slug %>" target="_blank">
+                      <%= item.product_name %>
+                    </a>
+                  </td>
+                  <td>x <%= item.quantity %></td>
+                  <td><%= item.unit_price.toLocaleString() %>₫</td>
+                  <td><strong><%= item.total_price.toLocaleString() %>₫</strong></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="order-summary">
+          <div class="summary-line">
+            <span>Tạm tính:</span>
+            <strong><%= order.subtotal.toLocaleString() %>₫</strong>
+          </div>
+          <div class="summary-line">
+            <span>Phí vận chuyển:</span>
+            <strong><%= order.shipping_fee.toLocaleString() %>₫</strong>
+          </div>
+          <% if (order.discount_total > 0) { %>
+            <div class="summary-line discount">
+              <span>Giảm giá:</span>
+              <strong>-<%= order.discount_total.toLocaleString() %>₫</strong>
+            </div>
+          <% } %>
+          <div class="summary-line total">
+            <span>Tổng cộng:</span>
+            <strong><%= order.grand_total.toLocaleString() %>₫</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-content">
+      <div class="admin-card glass-box">
+        <h4>Thông tin đơn hàng</h4>
+        
+        <div class="info-group">
+          <strong>Trạng thái đơn hàng:</strong>
+          <p><strong><%= translateStatus(order.status) %></strong></p>
+        </div>
+        
+        <div class="info-group">
+          <strong>Địa chỉ giao hàng:</strong>
+          <% if (order.shipping_address) { %>
+            <p><%= order.shipping_address.full_name %></p>
+            <p><%= order.shipping_address.phone %></p>
+            <p><%= order.shipping_address.address_line1 %></p>
+            <p>
+              <%= order.shipping_address.city %>, 
+              <%= order.shipping_address.district %>, 
+              <%= order.shipping_address.province %>
+            </p>
+          <% } else { %>
+            <p>Không có địa chỉ.</p>
+          <% } %>
+        </div>
+        
+        <div class="info-group">
+          <strong>Thanh toán:</strong>
+          <p>
+            <%= (order.payment_method === 'cod') ? 'Thanh toán khi nhận hàng (COD)' : 'Chuyển khoản / Online' %>
+          </p>
+          <p>
+            Trạng thái: 
+            <strong><%= (order.payment_status === 'paid') ? 'Đã thanh toán' : 'Chưa thanh toán' %></strong>
+          </p>
+        </div>
+        
+        <a href="/account/orders" class="btn btn-outline w-full" style="margin-top: 1rem;">
+          Trở về danh sách đơn hàng
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
+
+<style>
+  .order-detail-page {
+    max-width: 1000px; /* Rộng hơn trang account */
+  }
+  .admin-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px; 
+    gap: 1.5rem;
+  }
+  .main-content { grid-column: 1 / 2; }
+  .sidebar-content {
+    grid-column: 2 / 3;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .admin-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .theme-dark .admin-card {
+    background: rgba(255,255,255,0.05);
+  }
+  .admin-card h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+  
+  .table-wrap.minimal {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .table-wrap.minimal table { width: 100%; border-collapse: collapse; }
+  .table-wrap.minimal th, .table-wrap.minimal td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .table-wrap.minimal th { background: var(--primary-100); font-weight: 600; }
+  .theme-dark .table-wrap.minimal th { background: #122544; }
+  .table-wrap.minimal tbody tr:last-child td { border-bottom: none; }
+  .admin-table-thumb {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .table-wrap.minimal td a { color: var(--text); font-weight: 600; text-decoration: none; }
+  .table-wrap.minimal td a:hover { color: var(--primary); }
+  
+  .order-summary {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    max-width: 400px;
+    margin-left: auto;
+  }
+  .summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  .summary-line.discount { color: var(--danger); }
+  .summary-line.total {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-700);
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .theme-dark .summary-line.total { color: var(--primary); }
+  
+  .info-group { margin-bottom: 1rem; }
+  .info-group p { margin: 0.25rem 0; color: var(--muted); }
+  .info-group strong { color: var(--text); }
+  .btn.w-full { width: 100%; justify-content: center; }
+
+  @media (max-width: 900px) {
+    .admin-form-grid { grid-template-columns: 1fr; }
+    .main-content { grid-row: 2 / 3; }
+    .sidebar-content { grid-row: 1 / 2; }
+    .order-summary { max-width: 100%; }
+  }
+</style>

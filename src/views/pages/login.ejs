@@ -1,0 +1,186 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+
+<section class="container auth-split" data-animate="fade">
+  <div class="split-card" data-animate="fade-up">
+    <div class="split-left">
+      <div class="hero">
+        <div class="hero-illus">🚀</div>
+        <h3>Plan your activities and control your progress online</h3>
+        <p>TechShop Blue — mua sắm thông minh, tối ưu trải nghiệm.</p>
+        <div class="dots">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+    <div class="split-right">
+      <div class="header-row">
+        <a class="muted" href="/register">Sign Up</a>
+      </div>
+      <h2 class="split-title">Sign In</h2>
+
+  <% if (locals.flash && flash.success && flash.success.length) { %>
+    <div class="alert success" data-animate="fade-up">
+      <%= flash.success[0] %>
+    </div>
+  <% } %>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert error" data-animate="fade-up"><%= error %></div>
+  <% } %>
+
+      <form method="post" action="/login" 
+        class="auth-form" 
+        data-animate="fade-up" 
+        data-duration="700">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+    <input type="hidden" name="next" value="<%= typeof nextUrl !== 'undefined' ? nextUrl : '' %>"/>
+
+        <label>Username</label>
+        <input type="text" name="username" required placeholder="Nhập username của bạn" />
+
+        <label>Mật khẩu</label>
+        <div class="password-wrapper">
+          <input type="password" name="password" id="password" required placeholder="••••••••"/>
+          <button type="button" class="toggle-password" data-target="password" aria-label="Hiện mật khẩu">👁</button>
+        </div>
+
+        <div class="form-utility">
+          <label class="remember">
+            <input type="checkbox" name="remember" value="1"/>
+            <span class="check"></span>
+            <span>Ghi nhớ</span>
+          </label>
+          <a href="/forgot" class="forgot-link">Quên mật khẩu?</a>
+        </div>
+
+        <button class="btn btn-primary w-full" data-animate="zoom-in">Đăng nhập</button>
+
+        <div style="margin-top:1.2rem" data-animate="fade-up" data-delay="120">
+          <a class="btn btn-outline w-full" href="/auth/google" style="margin-bottom:.5rem">
+            <i class="ri-google-fill" style="color:#db4437"></i> Đăng nhập với Google
+          </a>
+          <a class="btn btn-outline w-full" href="/auth/facebook">
+            <i class="ri-facebook-circle-fill" style="color:#1877f2"></i> Đăng nhập với Facebook
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
+
+<script>
+  // 👁 Toggle hiển thị mật khẩu
+  document.querySelectorAll(".toggle-password").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = document.getElementById(btn.getAttribute("data-target"));
+      if (target.type === "password") {
+        target.type = "text";
+        btn.textContent = "🙈";
+      } else {
+        target.type = "password";
+        btn.textContent = "👁";
+      }
+    });
+  });
+</script>
+
+<style>
+  .auth-split { margin: 2rem auto; }
+  .split-card {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    border: 1px solid var(--border);
+    border-radius: 1.2rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background: var(--elev);
+  }
+  .split-left { background: linear-gradient(180deg, #59e0c5, #24c1a5); color: #083a3a; padding: 2rem; display:flex; align-items:center; justify-content:center; }
+  .split-left .hero { max-width: 420px; text-align: center; }
+  .hero-illus { font-size: 3rem; margin-bottom: .6rem; }
+  .split-left h3 { margin: .3rem 0; font-size: 1.2rem; color: #0b3c3c; }
+  .split-left p { color: #0b544e; }
+  .dots { margin-top: 1.2rem; display:flex; gap:.3rem; justify-content:center; opacity:.7; }
+  .dots span { width:6px; height:6px; background:#0b544e; border-radius:50%; display:inline-block; }
+  .split-right { padding: 2rem; background: var(--elev); }
+  .header-row { display:flex; justify-content:flex-end; }
+  .split-title { margin: .2rem 0 1rem; color: var(--primary); }
+  .auth-form { display:flex; flex-direction:column; gap:.65rem; }
+  .header-row a { text-decoration:none; font-weight:700; color: var(--primary-700); background: var(--primary-100); padding:.35rem .8rem; border-radius:999px; border:1px solid var(--border); }
+  .header-row a:hover { background: var(--primary); color:#fff; border-color: var(--primary); }
+  .theme-dark .header-row a { color:#e6efff; background: rgba(255,255,255,0.08); border-color:#2a3b5c; }
+  .form-utility { display:flex; align-items:center; justify-content:space-between; margin:.6rem 0 1rem; }
+  .remember { display:inline-flex; align-items:center; gap:.5rem; cursor:pointer; user-select:none; color: var(--text); }
+  .remember input { display:none; }
+  .remember .check { width:18px; height:18px; border-radius:4px; border:1.5px solid var(--border); background: var(--elev); display:inline-block; position:relative; transition: all .2s ease; }
+  .remember input:checked + .check { background: var(--primary); border-color: var(--primary); }
+  .remember input:checked + .check::after { content:''; position:absolute; left:4px; top:1px; width:6px; height:10px; border:2px solid #fff; border-top:0; border-left:0; transform: rotate(45deg); }
+  .forgot-link { color: var(--primary-700); text-decoration:none; font-weight:600; }
+  .forgot-link:hover { text-decoration: underline; }
+
+  .password-wrapper {
+    position: relative;
+  }
+
+  /* Cần giữ lại .toggle-password vì nó nằm bên trong .password-wrapper */
+  .password-wrapper .toggle-password {
+    position: absolute;
+    right: .6rem;
+    /* top: .6rem; (Điều chỉnh nếu top: 50% bị lệch sau khi xóa .input-control) */
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--muted);
+    transition: color .2s ease;
+  }
+
+  .toggle-password:hover {
+    color: var(--primary);
+  }
+
+  .btn.w-full { width: 100%; }
+
+  /* Alert flash */
+  .alert {
+    border-radius: .5rem;
+    padding: .75rem 1rem;
+    margin-bottom: .8rem;
+    animation: fadeIn .4s ease;
+  }
+
+  .alert.success {
+    background: #dcfce7;
+    color: #14532d;
+    border-left: 4px solid #22c55e;
+  }
+
+  .alert.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .auth.section {
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    
+    /* === ĐÃ XÓA .input-control ở chế độ dark === */
+
+    .toggle-password {
+      color: #9ca3af;
+    }
+  }
+</style>

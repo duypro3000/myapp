@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="container" style="min-height:60vh">
+    <% if (locals.flash && flash.success && flash.success.length) { %>
+      <div class="alert success" data-animate="fade-up">
+        <i class="ri-check-double-line"></i> <%= flash.success[0] %>
+      </div>
+    <% } %>
+    <% if (locals.flash && flash.error && flash.error.length) { %>
+      <div class="alert error" data-animate="fade-up">
+        <i class="ri-error-warning-line"></i> <%= flash.error[0] %>
+      </div>
+    <% } %>
+
+    <%- body %>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>
+
+
